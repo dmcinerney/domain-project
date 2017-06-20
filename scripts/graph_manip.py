@@ -192,4 +192,4 @@ def get_n_level_graph_from(original_graph, root, n):
 			neighbors.extend(original_graph.neighbors(node))
 		saved_nodes.extend(neighbors)
 		prev_nodes = neighbors
-	return subgraph(original_graph, nodes)
+	return subgraph(original_graph, saved_nodes)
