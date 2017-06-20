@@ -14,7 +14,7 @@ if __name__ == '__main__':
 	cluster_groupings_file = "cluster_groupings.txt"
 	cluster_names_file = "cluster_names.txt"
 	topological_sorting_file = "topological_sorting.txt"
-	
+
 	G = graph_manip.load_graph(args.adjacencies_file)
 	new_graph = graph_manip.get_n_level_graph_from(G, "Category:Main_topic_classifications", 5)
 
@@ -22,4 +22,5 @@ if __name__ == '__main__':
 		for node in new_graph.nodes():
 			outfile.write(node+"\n")
 
-	graph_manip.compute_clustering(original_graph, components, number_of_clusters, cluster_mappings_file, cluster_groupings_file, cluster_names_file, topological_sorting_file)
+	graph_manip.compute_clustering(G, components, number_of_clusters, cluster_mappings_file, cluster_groupings_file, cluster_names_file, topological_sorting_file)
+	
