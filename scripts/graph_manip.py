@@ -184,9 +184,12 @@ def compute_clustering(original_graph, components, number_of_clusters, cluster_m
 			topfile.write("\n")
 
 def get_n_level_graph_from(original_graph, root, n):
-	nodes = [root]
+	prev_nodes = [root]
+	saved_nodes = [root]
 	for i in range(n):
-		for node in nodes:
-			for neighbor in original_graph.neighbors(node):
-				nodes.append(neighbor)
+		neighbors = []
+		for node in prev_nodes:
+			neighbors.extend(original_graph.neighbors(node))
+		saved_nodes.extend(neighbors)
+		prev_nodes = neighbors
 	return subgraph(original_graph, nodes)
