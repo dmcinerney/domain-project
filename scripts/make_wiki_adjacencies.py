@@ -41,7 +41,7 @@ def get_stop_words(stopwords_file):
 	return dumbwords
 
 def add_adjacencies(G,input_filename,embeddings_file=None,stopwords_file=None):
-	print("loading adjacencies from input file ("+input_filename+")")
+	print("loading adjacencies from dbpedia file ("+input_filename+")")
 	import re
 	beginningstr = "<http://dbpedia.org/resource/"
 	endingstr = ">"
@@ -52,9 +52,10 @@ def add_adjacencies(G,input_filename,embeddings_file=None,stopwords_file=None):
 	with open(input_filename, "r") as infile:
 		for i,line in enumerate(infile):
 			#if i > 1000: break
-			splitline = line.strip().split()
+			line = line.strip()
+			if line[0] == "#": continue
+			splitline = line.split()
 			#print(splitline[0],splitline[2])
-			if len(splitline) != 3: continue
 			page1 = re.findall(pattern,splitline[0])
 			page2 = re.findall(pattern,splitline[2])
 			if len(page1) == 0 or len(page2) == 0:

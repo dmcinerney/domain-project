@@ -22,9 +22,9 @@ if __name__ == '__main__':
 	graph_depth = 3
 
 	if from_dbpedia:
-		G = graph_manip.load_graph(input_file)
-	else:
 		G = make_wiki_adjacencies.add_adjacencies(graph_manip.DiGraph(),input_file)
+	else:
+		G = graph_manip.load_graph(input_file)
 	new_graph = graph_manip.get_n_level_graph_from(G, root_node, graph_depth)
 
 	graph_manip.compute_clustering(G, [new_graph], number_of_clusters, cluster_mappings_file, cluster_groupings_file, cluster_names_file, topological_sorting_file)
