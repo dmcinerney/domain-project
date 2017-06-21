@@ -27,8 +27,9 @@ if __name__ == '__main__':
 		G = make_wiki_adjacencies.add_adjacencies(graph_manip.DiGraph(),input_file)
 	new_graph = graph_manip.get_n_level_graph_from(G, root_node, graph_depth)
 
+	graph_manip.compute_clustering(G, [new_graph], number_of_clusters, cluster_mappings_file, cluster_groupings_file, cluster_names_file, topological_sorting_file)
+	
 	with open(output_file, "w") as outfile:
 		for node in new_graph.nodes():
 			outfile.write(node+"\n")
 
-	graph_manip.compute_clustering(G, [new_graph], number_of_clusters, cluster_mappings_file, cluster_groupings_file, cluster_names_file, topological_sorting_file)
