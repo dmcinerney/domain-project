@@ -190,7 +190,7 @@ def get_n_level_graph_from(original_graph, root, n):
 		neighbors = []
 		for node in prev_nodes:
 			neighbors.extend(original_graph.neighbors(node))
-		saved_nodes.extend(neighbors)
+		saved_nodes.union(neighbors)
 		prev_nodes = neighbors
 		print(str(len(saved_nodes))+" nodes")
 		print(str(i)+" / "+str(n))

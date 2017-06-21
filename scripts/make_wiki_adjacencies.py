@@ -40,9 +40,8 @@ def get_stop_words(stopwords_file):
 					dumbwords.append(line.strip())
 	return dumbwords
 
-def make_adjacency_file(input_filename,adjacencies_file,embeddings_file=None,stopwords_file=None):
-	print("loading from input file ("+input_filename+")")
-	G = DiGraph()
+def add_adjacencies(G,input_filename,embeddings_file=None,stopwords_file=None):
+	print("loading adjacencies from input file ("+input_filename+")")
 	import re
 	beginningstr = "<http://dbpedia.org/resource/"
 	endingstr = ">"
@@ -55,6 +54,7 @@ def make_adjacency_file(input_filename,adjacencies_file,embeddings_file=None,sto
 			#if i > 1000: break
 			splitline = line.strip().split()
 			#print(splitline[0],splitline[2])
+			if len(splitline) != 3: continue
 			page1 = re.findall(pattern,splitline[0])
 			page2 = re.findall(pattern,splitline[2])
 			if len(page1) == 0 or len(page2) == 0:
@@ -79,14 +79,17 @@ def make_adjacency_file(input_filename,adjacencies_file,embeddings_file=None,sto
 			else:
 				G.add_edge(page2,page1,weight=1.0)
 			if (i+1) % 100000 == 0: print(i+1)
-	print("done loading graph")
+	print("done adding adjacencies")
 
-	# write the adjacency list to file
-	print("writing to file")
+# write the adjacency list to file
+def write_adjacency_file(G, adjacencies_file):
+	print("writing adjacencies to file ("+adjacencies_file+")")
 	with open(adjacencies_file,"w") as adjfile:
 		for node in G.nodes():
 			adjfile.write(node+" "+str([(n, G.edge[node][n]["weight"]) for n in G.neighbors(node)])+"\n")
 	print("done writing to file")
+
+
 '''
 "/Users/jeredmcinerney/Desktop/Intelellectual/glove/glove.6B.300d.txt"
 'stopwords.txt'
@@ -102,4 +105,6 @@ if __name__ == '__main__':
 
 	args = parser.parse_args()
 
-	make_adjacency_file(args.inputfile,args.adjacencies_file,embeddings_file=args.embeddings_file,stopwords_file=args.stopwords_file)
+	G = DiGraph()
+	G = add_adjacencies(G, args.inputfile,embeddings_file=args.embeddings_file,stopwords_file=args.stopwords_file)
+	write_adjacency_file(G, adjacencies_file,args.adjacencies_file)
