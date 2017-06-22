@@ -110,5 +110,5 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 
 	G = DiGraph()
-	G = add_adjacencies(G, args.inputfile,embeddings_file=args.embeddings_file,stopwords_file=args.stopwords_file)
+	add_adjacencies(G, args.inputfile,embeddings_file=args.embeddings_file,stopwords_file=args.stopwords_file)
 	write_adjacency_file(G, args.adjacencies_file)
