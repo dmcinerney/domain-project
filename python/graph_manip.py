@@ -118,7 +118,7 @@ def get_center_node(G):
 	node_centrality = max(((node,centrality) for node,centrality in centralities.items()), key=lambda x:x[1])
 	return node_centrality[0]
 
-def compute_clustering(original_graph, components, number_of_clusters, cluster_mappings_file, cluster_groupings_file, cluster_names_file, topological_sorting_file):
+def compute_clustering(original_graph, components, number_of_clusters, cluster_groupings_file, cluster_names_file, topological_sorting_file=None):
 	print("computing clustering")
 	from sklearn import cluster as cl
 	clusters = []
@@ -128,7 +128,7 @@ def compute_clustering(original_graph, components, number_of_clusters, cluster_m
 		print("\nthis is a "+str(len(graph))+"-node graph")
 		is_acyclic = is_directed_acyclic_graph(graph)
 		print("directed acyclic: "+str(is_acyclic))
-		if is_acyclic:
+		if topological_sorting_file and is_acyclic:
 			topsort.append(topological_sort(graph))
 			print("\tdone with topological sort")
 			print("\ttop 3 categories: "+str(topsort[-1][:3]))
@@ -153,13 +153,13 @@ def compute_clustering(original_graph, components, number_of_clusters, cluster_m
 	#print(clusters)
 	graphclusternum = 0
 	cluster_groupings = {}
-	cluster_mappings = []
+	#cluster_mappings = []
 	for graphcluster in clusters:
 		for node, cluster in graphcluster:
 			if str(graphclusternum)+" "+str(cluster) not in cluster_groupings.keys():
 				cluster_groupings[str(graphclusternum)+" "+str(cluster)] = []
 			cluster_groupings[str(graphclusternum)+" "+str(cluster)].append(node)
-			cluster_mappings.append((node,str(graphclusternum)+" "+str(cluster)))
+			#cluster_mappings.append((node,str(graphclusternum)+" "+str(cluster)))
 		graphclusternum += 1
 	cluster_names = {}
 	for clusterkey,nodes in cluster_groupings.items():
@@ -168,10 +168,6 @@ def compute_clustering(original_graph, components, number_of_clusters, cluster_m
 	#print(cluster_groupings)
 
 	### WRITE TO FILES ###
-	with open(cluster_mappings_file, "w") as mapfile:
-		for nodename, cluster in cluster_mappings:
-			mapfile.write(nodename+" "+str(cluster)+"\n")
-
 	with open(cluster_groupings_file, "w") as groupfile:
 		for cluster, nodes in cluster_groupings.items():
 			groupfile.write(str(cluster)+" "+str(nodes)+"\n")
@@ -180,11 +176,12 @@ def compute_clustering(original_graph, components, number_of_clusters, cluster_m
 		for cluster, name in cluster_names.items():
 			namesfile.write(str(cluster)+" "+name+"\n")
 
-	with open(topological_sorting_file, "w") as topfile:
-		for nodelist in topsort:
-			for node in nodelist:
-				topfile.write(node+"\n")
-			topfile.write("\n")
+	if topological_sorting_file:
+		with open(topological_sorting_file, "w") as topfile:
+			for nodelist in topsort:
+				for node in nodelist:
+					topfile.write(node+"\n")
+				topfile.write("\n")
 
 def get_n_level_graph_from(original_graph, root, n):
 	prev_nodes = [root]
