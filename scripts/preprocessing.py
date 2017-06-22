@@ -18,6 +18,7 @@ if __name__ == '__main__':
 	parser.add_argument("-g", "--get_categories", action="store_true")
 	parser.add_argument("-d", "--make_dataset", action="store_true")
 	parser.add_argument("-t", "--train_articles", action="store_true")
+	parser.add_argument("-s", "--start_from_scratch", action="store_true")
 
 	#temp file names
 	adjacency_file = "temp/adjacencies.txt"
@@ -25,8 +26,10 @@ if __name__ == '__main__':
 	cluster_names_file = "temp/cluster_names.txt"
 
 	args = parser.parse_args()
-	os.system("rm -r temp")
-	os.system("mkdir temp")
+	if args.start_from_scratch:
+		os.system("rm -r temp")
+	if not os.path.isdir("/temp"):
+		os.system("mkdir temp")
 
 	if args.path_to_repository:
 		path_to_repository = args.path_to_repository

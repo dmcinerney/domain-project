@@ -14,12 +14,12 @@ if __name__ == '__main__':
 
 	input_file = args.input_file
 	from_dbpedia = args.from_dbpedia
-	output_file = "categories.txt"
+	output_file = "temp/categories.txt"
 	number_of_clusters = 100
-	cluster_mappings_file = "cluster_mappings.txt"
+	cluster_mappings_file = "temp/cluster_mappings.txt"
 	cluster_groupings_file = args.cluster_groupings_file
 	cluster_names_file = args.cluster_names_file
-	topological_sorting_file = "topological_sorting.txt"
+	topological_sorting_file = "temp/topological_sorting.txt"
 	root_node = "Category:Main_topic_classifications"
 	graph_depth = 3
 

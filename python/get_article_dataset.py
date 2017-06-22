@@ -1,6 +1,6 @@
 import make_wiki_adjacencies
 import graph_manip
-import concrete
+#import concrete
 
 def get_cluster_names(cluster_names_file):
 	cluster_names = []
