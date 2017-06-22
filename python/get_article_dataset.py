@@ -24,6 +24,7 @@ def get_cluster_categories(cluster_groupings_file):
 	return cluster_groupings
 
 def get_article_text(title):
+	#tar -zxvf <tar filename> <file you want to extract> ?
 	#NEED TO IMPLEMENT
 	#use concrete
 	pass
@@ -44,6 +45,7 @@ if __name__ == '__main__':
 	parser.add_argument("adjacencies_file")
 	parser.add_argument("cluster_groupings_file")
 	parser.add_argument("cluster_names_file")
+	parser.add_argument("dataset_file")
 
 	args = parser.parse_args()
 
@@ -51,11 +53,11 @@ if __name__ == '__main__':
 	adjacencies_file = args.adjacencies_file
 	cluster_names_file = args.cluster_names_file
 	cluster_groupings_file = args.cluster_groupings_file
-	dataset_file = "dataset.txt"
+	dataset_file = args.dataset_file
 
 	#attach articles to category graph
 	G = graph_manip.DiGraph()
-	make_wiki_adjacencies.add_adjacencies(G, adjacencies_file, only_attached=True)
+	make_wiki_adjacencies.add_adjacencies(G, article_categories_file, only_attached=True)
 
 	#get cluster_names, cluster_categories from cluster_names_file and cluster_groupings_file
 	cluster_names = get_cluster_names(cluster_names_file)
