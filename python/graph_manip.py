@@ -99,8 +99,9 @@ def load_graph(adjacencies_file,verbose=False):
 	print("loading from adjacencies file ("+adjacencies_file+")")
 	with open(adjacencies_file,"r") as adjfile:
 		for i,line in enumerate(adjfile):
-			node = line.strip().split()[0]
-			nodes = eval(line.strip()[len(node)+1:])
+			line = line.strip()
+			node = line.split()[0]
+			nodes = eval(line[len(node)+1:])
 			nodenames = [n[0] for n in nodes]
 			nodenames.append(node)
 			G.add_nodes_from(nodenames)
@@ -111,6 +112,11 @@ def load_graph(adjacencies_file,verbose=False):
 	print("INFORMATION ABOUT FULL GRAPH")
 	print_graph_info(G,verbose=verbose)
 	return G
+
+def get_center_node(G):
+	centralities = betweenness_centrality(G.to_undirected())
+	node_centrality = max(((node,centrality) for node,centrality in centralities.items()), key=lambda x:x[1])
+	return node_centrality[0]
 
 def compute_clustering(original_graph, components, number_of_clusters, cluster_mappings_file, cluster_groupings_file, cluster_names_file, topological_sorting_file):
 	print("computing clustering")
@@ -157,10 +163,7 @@ def compute_clustering(original_graph, components, number_of_clusters, cluster_m
 		graphclusternum += 1
 	cluster_names = {}
 	for clusterkey,nodes in cluster_groupings.items():
-		subG = subgraph(original_graph, nodes).to_undirected()
-		centralities = betweenness_centrality(subG)
-		node_centrality = max(((node,centrality) for node,centrality in centralities.items()), key=lambda x:x[1])
-		cluster_names[clusterkey] = node_centrality[0]
+		cluster_names[clusterkey] = get_center_node(subgraph(original_graph, nodes))[9:]
 	#print(cluster_mappings)
 	#print(cluster_groupings)
 
@@ -190,8 +193,8 @@ def get_n_level_graph_from(original_graph, root, n):
 		neighbors = []
 		for node in prev_nodes:
 			neighbors.extend(original_graph.neighbors(node))
-		saved_nodes.union(neighbors)
+		saved_nodes = saved_nodes.union(neighbors)
 		prev_nodes = neighbors
 		print(str(len(saved_nodes))+" nodes")
-		print(str(i)+" / "+str(n))
+		print(str(i+1)+" / "+str(n))
 	return subgraph(original_graph, saved_nodes)

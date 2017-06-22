@@ -40,7 +40,7 @@ def get_stop_words(stopwords_file):
 					dumbwords.append(line.strip())
 	return dumbwords
 
-def add_adjacencies(G,input_filename,embeddings_file=None,stopwords_file=None):
+def add_adjacencies(G,input_filename,embeddings_file=None,stopwords_file=None,only_attached=False):
 	print("loading adjacencies from dbpedia file ("+input_filename+")")
 	import re
 	beginningstr = "<http://dbpedia.org/resource/"
@@ -64,6 +64,9 @@ def add_adjacencies(G,input_filename,embeddings_file=None,stopwords_file=None):
 			page1 = page1[0].replace(beginningstr,"").replace(endingstr,"")
 			page2 = page2[0].replace(beginningstr,"").replace(endingstr,"")
 			#print(page1,page2)
+			if only_attached and (page1 not in G.nodes()) and (page2 not in G.nodes()):
+				if (i+1) % 100000 == 0: print(i+1)
+				continue
 			G.add_node(page1)
 			G.add_node(page2)
 			if embeddings_file:
@@ -108,4 +111,4 @@ if __name__ == '__main__':
 
 	G = DiGraph()
 	G = add_adjacencies(G, args.inputfile,embeddings_file=args.embeddings_file,stopwords_file=args.stopwords_file)
-	write_adjacency_file(G, adjacencies_file,args.adjacencies_file)
+	write_adjacency_file(G, args.adjacencies_file)

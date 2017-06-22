@@ -6,6 +6,8 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 
 	parser.add_argument("input_file")
+	parser.add_argument("cluster_groupings_file")
+	parser.add_argument("cluster_names_file")
 	parser.add_argument("-d", "--from_dbpedia", action="store_true")
 
 	args = parser.parse_args()
@@ -15,8 +17,8 @@ if __name__ == '__main__':
 	output_file = "categories.txt"
 	number_of_clusters = 100
 	cluster_mappings_file = "cluster_mappings.txt"
-	cluster_groupings_file = "cluster_groupings.txt"
-	cluster_names_file = "cluster_names.txt"
+	cluster_groupings_file = args.cluster_groupings_file
+	cluster_names_file = args.cluster_names_file
 	topological_sorting_file = "topological_sorting.txt"
 	root_node = "Category:Main_topic_classifications"
 	graph_depth = 3

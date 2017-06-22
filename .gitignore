@@ -4,4 +4,8 @@
 
 # Operating System Files #
 ##########################
-.DS_Store
+*.DS_Store
+
+# Special Files #
+#################
+*temp/*
