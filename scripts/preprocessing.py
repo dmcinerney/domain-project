@@ -24,6 +24,7 @@ if __name__ == '__main__':
 	adjacencies_file = "temp/adjacencies.txt"
 	cluster_groupings_file = "temp/cluster_groupings.txt"
 	cluster_names_file = "temp/cluster_names.txt"
+	dataset_file = "temp/dataset.csv"
 
 	args = parser.parse_args()
 	if args.start_from_scratch:
@@ -49,6 +50,6 @@ if __name__ == '__main__':
 			raise Exception("no concrete wikipedia directory!")
 		if not args.article_categories_file:
 			raise Exception("no article categories file!")
-		os.system("python "+path_to_repository+"get_article_dataset.py "+args.wiki_concrete_directory+" "+args.article_categories_file+" "+adjacencies_file+" "+cluster_groupings_file+" "+cluster_names_file)
+		os.system("python "+path_to_repository+"get_article_dataset.py "+args.wiki_concrete_directory+" "+args.article_categories_file+" "+adjacencies_file+" "+cluster_groupings_file+" "+cluster_names_file+" "+dataset_file)
 	if args.train_articles:
 		pass

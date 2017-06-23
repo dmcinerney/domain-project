@@ -14,7 +14,6 @@ if __name__ == '__main__':
 
 	input_file = args.input_file
 	from_dbpedia = args.from_dbpedia
-	output_file = "temp/categories.txt"
 	number_of_clusters = 100
 	cluster_groupings_file = args.cluster_groupings_file
 	cluster_names_file = args.cluster_names_file
@@ -30,8 +29,4 @@ if __name__ == '__main__':
 	new_graph = graph_manip.get_n_level_graph_from(G, root_node, graph_depth)
 
 	graph_manip.compute_clustering(G, [new_graph], number_of_clusters, cluster_groupings_file, cluster_names_file, topological_sorting_file)
-	
-	with open(output_file, "w") as outfile:
-		for node in new_graph.nodes():
-			outfile.write(node+"\n")
 
