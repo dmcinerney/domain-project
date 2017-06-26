@@ -11,7 +11,7 @@ def get_cluster_names(cluster_names_file):
 			cluster_id = " ".join(splitline[:2])
 			cluster_name = splitline[-1]
 			cluster_names.append((cluster_id,cluster_name))
-	return cluster_name
+	return cluster_names
 
 def get_cluster_categories(cluster_groupings_file):
 	cluster_groupings = {}
@@ -33,9 +33,10 @@ def get_article_text(title):
 def get_cluster_articles(G, categories):
 	articles = []
 	for category in categories:
-		for neighbor in G.neighbors(category):
-			if not neighbor[:9] == "Category:":
-				articles.append(get_article_text(neighbor))
+		if category in G.nodes():
+			for neighbor in G.neighbors(category):
+				if not neighbor[:9] == "Category:":
+					articles.append((neighbor,get_article_text(neighbor)))
 	return articles
 
 if __name__ == '__main__':
@@ -58,7 +59,7 @@ if __name__ == '__main__':
 
 	#attach articles to category graph
 	G = graph_manip.DiGraph()
-	make_wiki_adjacencies.add_adjacencies(G, article_categories_file, only_attached=True)
+	make_wiki_adjacencies.add_adjacencies(G, article_categories_file)
 
 	#get cluster_names, cluster_categories from cluster_names_file and cluster_groupings_file
 	cluster_names = get_cluster_names(cluster_names_file)

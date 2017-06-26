@@ -17,7 +17,7 @@ if __name__ == '__main__':
 	parser.add_argument("-m", "--make_adjacencies", action="store_true")
 	parser.add_argument("-g", "--get_categories", action="store_true")
 	parser.add_argument("-d", "--make_dataset", action="store_true")
-	parser.add_argument("-t", "--train_articles", action="store_true")
+	parser.add_argument("-t", "--train_classifiers", action="store_true")
 	parser.add_argument("-s", "--start_from_scratch", action="store_true")
 
 	#temp file names
@@ -42,14 +42,18 @@ if __name__ == '__main__':
 	if args.make_adjacencies:
 		if not args.category_links_file:
 			raise Exception("no category links file!")
+		print("MAKING ADJACENCIES")
 		os.system("python "+path_to_repository+"make_wiki_adjacencies.py "+args.category_links_file+" "+adjacency_file)
 	if args.get_categories:
+		print("GETTING CATEGORIES")
 		os.system("python "+path_to_repository+"get_categories2.py "+adjacencies_file+" "+cluster_groupings_file+" "+cluster_names_file)
 	if args.make_dataset:
 		if not args.wiki_concrete_directory:
 			raise Exception("no concrete wikipedia directory!")
 		if not args.article_categories_file:
 			raise Exception("no article categories file!")
+		print("GETTING ARTICLE DATASET")
 		os.system("python "+path_to_repository+"get_article_dataset.py "+args.wiki_concrete_directory+" "+args.article_categories_file+" "+adjacencies_file+" "+cluster_groupings_file+" "+cluster_names_file+" "+dataset_file)
-	if args.train_articles:
+	if args.train_classifiers:
+		print("TRAINING CLASSIFIERS")
 		pass
