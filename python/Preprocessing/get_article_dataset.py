@@ -1,6 +1,6 @@
 import make_wiki_adjacencies
 import graph_manip
-import pandas
+import pandas as pd
 #import concrete
 
 def get_cluster_names(cluster_names_file):
@@ -66,11 +66,20 @@ if __name__ == '__main__':
 	cluster_categories = get_cluster_categories(cluster_groupings_file)
 
 	#For each category in each cluster, write out articles (from concrete) in that category to file (grouped by cluster)
+	'''
 	with open(dataset_file, "w") as datafile:
-		#FIXME: change to using pandas and csvs
+		rows = []
 		for i,(cluster_id,cluster_name) in enumerate(cluster_names):
 			articles = get_cluster_articles(G,cluster_categories[cluster_id])
 			datafile.write(cluster_id+" "+cluster_name+" "+str(articles)+"\n")
 			if ((i+1) % 1) == 0:
 				print(str(i+1)+" / "+str(len(cluster_names)))
-
+	'''
+	rows = []
+	for i,(cluster_id,cluster_name) in enumerate(cluster_names):
+		#if i > 44: break
+		articles = get_cluster_articles(G,cluster_categories[cluster_id])
+		rows.append(cluster_id,cluster_name,articles)
+		if ((i+1) % 1) == 0:
+			print(str(i+1)+" / "+str(len(cluster_names)))
+	pd.DataFrame.from_records(rows).to_csv(dataset_file)
