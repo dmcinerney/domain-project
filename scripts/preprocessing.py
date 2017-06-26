@@ -36,24 +36,32 @@ if __name__ == '__main__':
 		path_to_repository = args.path_to_repository
 	else:
 		path_to_repository = ""
-	path_to_repository = path_to_repository+"python/"
+	path_to_repository = path_to_repository+"python/Preprocessing/"
 
-	#run pipeline
+	#run preprocessing pipeline
 	if args.make_adjacencies:
 		if not args.category_links_file:
 			raise Exception("no category links file!")
 		print("MAKING ADJACENCIES")
-		os.system("python "+path_to_repository+"make_wiki_adjacencies.py "+args.category_links_file+" "+adjacency_file)
+		command = "python "+path_to_repository+"make_wiki_adjacencies.py "+args.category_links_file+" "+adjacency_file
+		print(command)
+		os.system(command)
 	if args.get_categories:
 		print("GETTING CATEGORIES")
-		os.system("python "+path_to_repository+"get_categories2.py "+adjacencies_file+" "+cluster_groupings_file+" "+cluster_names_file)
+		command = "python "+path_to_repository+"get_categories2.py "+adjacencies_file+" "+cluster_groupings_file+" "+cluster_names_file
+		print(command)
+		os.system(command)
 	if args.make_dataset:
 		if not args.wiki_concrete_directory:
 			raise Exception("no concrete wikipedia directory!")
 		if not args.article_categories_file:
 			raise Exception("no article categories file!")
 		print("GETTING ARTICLE DATASET")
-		os.system("python "+path_to_repository+"get_article_dataset.py "+args.wiki_concrete_directory+" "+args.article_categories_file+" "+adjacencies_file+" "+cluster_groupings_file+" "+cluster_names_file+" "+dataset_file)
+		command = "python "+path_to_repository+"get_article_dataset.py "+args.wiki_concrete_directory+" "+args.article_categories_file+" "+adjacencies_file+" "+cluster_groupings_file+" "+cluster_names_file+" "+dataset_file
+		print(command)
+		os.system(command)
 	if args.train_classifiers:
 		print("TRAINING CLASSIFIERS")
-		pass
+		command = "python "+path_to_repository+"train_classifiers.py "+dataset_file
+		print(command)
+		os.system(command)
