@@ -43,7 +43,6 @@ def get_cluster_articles(G, categories, vector_file):
 if __name__ == '__main__':
 	import argparse
 	parser = argparse.ArgumentParser()
-	parser.add_argument("wiki_concrete_directory")
 	parser.add_argument("article_categories_file")
 	parser.add_argument("adjacencies_file")
 	parser.add_argument("cluster_groupings_file")

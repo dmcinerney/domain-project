@@ -53,8 +53,3 @@ if __name__ == '__main__':
 	#POSSIBLE: could use joblib, but probably not a good idea
 	with open(args.classifiers_file, "wb") as classifiersfile:
 		classifiersfile.write(pickle.dumps(classifiers))
-
-'''
-
->>> clf2 = pickle.loads(s)
-'''
