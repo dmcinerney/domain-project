@@ -24,19 +24,20 @@ def get_cluster_categories(cluster_groupings_file):
 			cluster_groupings[cluster_id] = cluster_grouping
 	return cluster_groupings
 
-def get_article_text(title):
+def get_article_vectors(title, vector_file):
 	#tar -zxvf <tar filename> <file you want to extract> ?
 	#NEED TO IMPLEMENT
 	#use concrete
+	#or use pre-trained vectors (like lda vectors) for each document
 	pass
 
-def get_cluster_articles(G, categories):
+def get_cluster_articles(G, categories, vector_file):
 	articles = []
 	for category in categories:
 		if category in G.nodes():
 			for neighbor in G.neighbors(category):
 				if not neighbor[:9] == "Category:":
-					articles.append((neighbor,get_article_text(neighbor)))
+					articles.append((neighbor,get_article_vectors(neighbor, vector_file)))
 	return articles
 
 if __name__ == '__main__':
@@ -47,6 +48,7 @@ if __name__ == '__main__':
 	parser.add_argument("adjacencies_file")
 	parser.add_argument("cluster_groupings_file")
 	parser.add_argument("cluster_names_file")
+	parser.add_argument("vector_file")
 	parser.add_argument("dataset_file")
 
 	args = parser.parse_args()
@@ -55,6 +57,7 @@ if __name__ == '__main__':
 	adjacencies_file = args.adjacencies_file
 	cluster_names_file = args.cluster_names_file
 	cluster_groupings_file = args.cluster_groupings_file
+	vector_file = args.vector_file
 	dataset_file = args.dataset_file
 
 	#attach articles to category graph
@@ -78,7 +81,7 @@ if __name__ == '__main__':
 	rows = []
 	for i,(cluster_id,cluster_name) in enumerate(cluster_names):
 		#if i > 44: break
-		articles = get_cluster_articles(G,cluster_categories[cluster_id])
+		articles = get_cluster_articles(G,cluster_categories[cluster_id], vector_file)
 		rows.append(cluster_id,cluster_name,articles)
 		if ((i+1) % 1) == 0:
 			print(str(i+1)+" / "+str(len(cluster_names)))

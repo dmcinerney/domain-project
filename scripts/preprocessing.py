@@ -9,59 +9,78 @@ if __name__ == '__main__':
 	import os
 	parser = argparse.ArgumentParser()
 
+	#FIXME: may want to add "help=" to all of these
 	parser.add_argument("path_to_repository")
 	parser.add_argument("-l", "--category_links_file", type=str, default=None)
 	parser.add_argument("-c", "--article_categories_file", type=str, default=None)
 	parser.add_argument("-r", "--article_redirects_file", type=str, default=None)#may not include
 	parser.add_argument("-w", "--wiki_concrete_directory", type=str, default=None)
+	parser.add_argument("-v", "--vector_file", type=str, default=None)
 	parser.add_argument("-m", "--make_adjacencies", action="store_true")
 	parser.add_argument("-g", "--get_categories", action="store_true")
 	parser.add_argument("-d", "--make_dataset", action="store_true")
 	parser.add_argument("-t", "--train_classifiers", action="store_true")
 	parser.add_argument("-s", "--start_from_scratch", action="store_true")
+	parser.add_argument("-e", "--erase_temp", action="store_true")
 
-	#temp file names
-	adjacencies_file = "temp/adjacencies.txt"
-	cluster_groupings_file = "temp/cluster_groupings.txt"
-	cluster_names_file = "temp/cluster_names.txt"
-	dataset_file = "temp/dataset.csv"
-
-	args = parser.parse_args()
-	if args.start_from_scratch:
-		os.system("rm -r temp")
-	if not os.path.isdir("temp"):
-		os.system("mkdir temp")
-
+	#preprocessing path names
 	if args.path_to_repository:
 		path_to_repository = args.path_to_repository
 	else:
 		path_to_repository = ""
-	path_to_repository = path_to_repository+"python/Preprocessing/"
+	models_folder = os.path.join(args.path_to_repository,"models")
+	preprocessing_folder = os.path.join(path_to_repository,"python/Preprocessing")
+	temp_folder = os.path.join(path_to_repository,"temp_preprocessing")
+
+	#preprocessing file names
+	adjacencies_file = os.path.join(temp_folder,"adjacencies.txt")
+	cluster_groupings_file = os.path.join(temp_folder,"cluster_groupings.txt")
+	cluster_names_file = os.path.join(temp_folder,"cluster_names.txt")
+	dataset_file = os.path.join(temp_folder,"dataset.csv")
+	vector_file = os.path.join(temp_folder,"vectors.csv") #FIXME: not sure what type of file this should be (same format as whatever Zhenya gives me maybe)
+	classifiers_file = os.path.join(models_folder,"classifiers.pkl")
+
+	args = parser.parse_args()
+	if args.start_from_scratch:
+		os.system("rm -r "+temp_folder)
+	if not os.path.isdir(temp_folder):
+		os.system("mkdir "+temp_folder)
 
 	#run preprocessing pipeline
 	if args.make_adjacencies:
 		if not args.category_links_file:
 			raise Exception("no category links file!")
 		print("MAKING ADJACENCIES")
-		command = "python "+path_to_repository+"make_wiki_adjacencies.py "+args.category_links_file+" "+adjacency_file
+		command = "python "+os.path.join(preprocessing_folder,"make_wiki_adjacencies.py")+" "+args.category_links_file+" "+adjacency_file
 		print(command)
 		os.system(command)
 	if args.get_categories:
 		print("GETTING CATEGORIES")
-		command = "python "+path_to_repository+"get_categories2.py "+adjacencies_file+" "+cluster_groupings_file+" "+cluster_names_file
+		command = "python "+os.path.join(preprocessing_folder,"get_categories2.py")+" "+adjacencies_file+" "+cluster_groupings_file+" "+cluster_names_file
 		print(command)
 		os.system(command)
+	if not args.vector_file:
+		print("CREATING VECTOR FILE")
+		#FIXME: Need to do whatever Zhenya does to create the vectors file
+		#step 1: run script to create vector file named vector_file
+		#step 2: create a pickled vectorizor object file to convert articles during prediction time
+		raise NotImplementedError
+	else:
+		vector_file = args.vector_file
 	if args.make_dataset:
 		if not args.wiki_concrete_directory:
 			raise Exception("no concrete wikipedia directory!")
 		if not args.article_categories_file:
 			raise Exception("no article categories file!")
 		print("GETTING ARTICLE DATASET")
-		command = "python "+path_to_repository+"get_article_dataset.py "+args.wiki_concrete_directory+" "+args.article_categories_file+" "+adjacencies_file+" "+cluster_groupings_file+" "+cluster_names_file+" "+dataset_file
+		command = "python "+os.path.join(preprocessing_folder,"get_article_dataset.py")+" "+args.wiki_concrete_directory+" "+args.article_categories_file+" "+adjacencies_file+" "+cluster_groupings_file+" "+cluster_names_file+" "+vector_file+" "+dataset_file
 		print(command)
 		os.system(command)
 	if args.train_classifiers:
 		print("TRAINING CLASSIFIERS")
-		command = "python "+path_to_repository+"train_classifiers.py "+dataset_file
+		command = "python "+os.path.join(preprocessing_folder,"train_classifiers.py")+" "+dataset_file
 		print(command)
 		os.system(command)
+
+	if args.erase_temp:
+		os.system("rm -r "+temp_folder)
