@@ -141,15 +141,17 @@ def compute_clustering(original_graph, components, number_of_clusters, cluster_g
 			print("\tdoing spectral clustering to produce "+str(n)+" clusters")
 			#if len(graph) > 100000: print("jk, not gonna do this now"); continue
 			print("\t\tcreating adjacency matrix")
-			m = adjacency_matrix(graph.to_undirected())
+			tempnodes = graph.nodes()
+			m = adjacency_matrix(graph.to_undirected(),nodelist=tempnodes)
 			print("\t\tdone creating adjacency matrix")
 			print("\t\tstarting clustering")
 			#sp = cl.SpectralClustering(n_clusters=n, n_jobs=-1, affinity="precomputed")
 			sp = cl.SpectralClustering(n_clusters=n, affinity="precomputed")
-			clusters.append(list(zip(graph.nodes(), sp.fit_predict(m))))
+			clusters.append(list(zip(tempnodes, sp.fit_predict(m))))
 		print(str(i+1)+" / "+str(len(components)))
 	print("done clustering")
 
+	print("grouping and creating cluster ids")
 	#print(clusters)
 	graphclusternum = 0
 	cluster_groupings = {}
@@ -168,6 +170,7 @@ def compute_clustering(original_graph, components, number_of_clusters, cluster_g
 	#print(cluster_groupings)
 
 	### WRITE TO FILES ###
+	print("writing clusters to files")
 	with open(cluster_groupings_file, "w") as groupfile:
 		for cluster, nodes in cluster_groupings.items():
 			groupfile.write(str(cluster)+" "+str(nodes)+"\n")
