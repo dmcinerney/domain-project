@@ -27,14 +27,13 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 
 	initial_working_directory = os.getcwd()
-	print("changing working directory to "+args.path_to_repository)
-	os.chdir(args.path_to_repository)
-	sys.path.append(os.getcwd())#FIXME: there is a lot of commentary on this, not sure if it's the right way to do it
 
 	#preprocessing path names
-	models_folder = "models"
-	preprocessing_folder = "python/Preprocessing"
-	temp_folder = "temp_preprocessing"
+	path_to_repository = os.path.join(initial_working_directory,args.path_to_repository)
+	sys.path.append(path_to_repository)#FIXME: there is a lot of commentary on this, not sure if it's the right way to do it
+	models_folder = os.path.join(path_to_repository,"models")
+	preprocessing_folder = os.path.join(path_to_repository,"python/Preprocessing")
+	temp_folder = os.path.join(path_to_repository,"temp_preprocessing")
 
 	#preprocessing file names
 	adjacencies_file = os.path.join(temp_folder,"adjacencies.txt")
@@ -102,5 +101,3 @@ if __name__ == '__main__':
 
 	if args.erase_temp:
 		os.system("rm -r "+temp_folder)
-
-	os.chdir(initial_working_directory)#FIMXE: not sure if this is even needed
