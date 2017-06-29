@@ -23,21 +23,13 @@ def get_data(dataset_file):
 		X, y = zip(*Xy)
 	return X, y, names_dict
 
-if __name__ == '__main__':
-	import argparse
-	parser = argparse.ArgumentParser()
-	parser.add_argument("dataset_file")
-	parser.add_argument("classifiers_file")
-	parser.add_argument("-c", "--classifier_type", type=str, default="svm")
-
-	args = parser.parse_args()
-
-	X,y,names_dict = get_data(args.dataset_file)
+def main(dataset_file, classifiers_file, classifier_type="svm"):
+	X,y,names_dict = get_data(dataset_file)
 	clusterids = list(set(y))
 	classifiers = []
 
 	for clusterid in clusterids:
-		if args.classifier_type == "svm":
+		if classifier_type == "svm":
 			clf = svm.SVC()
 		else:
 			raise Exception("No classifier by that name is available!")
@@ -51,5 +43,17 @@ if __name__ == '__main__':
 		classifiers.append(clusterid,names_dict[clusterid],clf)
 
 	#POSSIBLE: could use joblib, but probably not a good idea
-	with open(args.classifiers_file, "wb") as classifiersfile:
+	with open(classifiers_file, "wb") as classifiersfile:
 		classifiersfile.write(pickle.dumps(classifiers))
+
+
+if __name__ == '__main__':
+	import argparse
+	parser = argparse.ArgumentParser()
+	parser.add_argument("dataset_file")
+	parser.add_argument("classifiers_file")
+	parser.add_argument("-c", "--classifier_type", type=str, default="svm")
+
+	args = parser.parse_args()
+
+	main(args.dataset_file, args.classifiers_file, classifier_type=args.classifier_type)

@@ -27,6 +27,8 @@ if __name__ == '__main__':
 	parser.add_argument("-s", "--start_from_scratch", action="store_true")
 	parser.add_argument("-e", "--erase_temp", action="store_true")
 
+	args = parser.parse_args()
+	
 	initial_working_directory = os.getcwd()
 	os.chdir(args.path_to_repository)
 

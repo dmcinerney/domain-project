@@ -98,6 +98,12 @@ def write_adjacency_file(G, adjacencies_file):
 "/Users/jeredmcinerney/Desktop/Intelellectual/glove/glove.6B.300d.txt"
 'stopwords.txt'
 '''
+
+def main(inputfile, adjacencies_file, embeddings_file=None, stopwords_file=None):
+	G = DiGraph()
+	add_adjacencies(G, inputfile,embeddings_file=embeddings_file,stopwords_file=stopwords_file)
+	write_adjacency_file(G, adjacencies_file)
+
 if __name__ == '__main__':
 	import argparse
 	parser = argparse.ArgumentParser()
@@ -109,6 +115,4 @@ if __name__ == '__main__':
 
 	args = parser.parse_args()
 
-	G = DiGraph()
-	add_adjacencies(G, args.inputfile,embeddings_file=args.embeddings_file,stopwords_file=args.stopwords_file)
-	write_adjacency_file(G, args.adjacencies_file)
+	main(args.inputfile, args.adjacencies_file, embeddings_file=args.embeddings_file, stopwords_file=args.stopwords_file)

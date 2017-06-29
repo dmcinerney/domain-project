@@ -40,25 +40,7 @@ def get_cluster_articles(G, categories, vector_file):
 					articles.append((neighbor,get_article_vectors(neighbor, vector_file)))
 	return articles
 
-if __name__ == '__main__':
-	import argparse
-	parser = argparse.ArgumentParser()
-	parser.add_argument("article_categories_file")
-	parser.add_argument("adjacencies_file")
-	parser.add_argument("cluster_groupings_file")
-	parser.add_argument("cluster_names_file")
-	parser.add_argument("vector_file")
-	parser.add_argument("dataset_file")
-
-	args = parser.parse_args()
-
-	article_categories_file = args.article_categories_file
-	adjacencies_file = args.adjacencies_file
-	cluster_names_file = args.cluster_names_file
-	cluster_groupings_file = args.cluster_groupings_file
-	vector_file = args.vector_file
-	dataset_file = args.dataset_file
-
+def main(article_categories_file,adjacencies_file,cluster_groupings_file,cluster_names_file,vector_file,dataset_file):
 	#attach articles to category graph
 	G = graph_manip.DiGraph()
 	make_wiki_adjacencies.add_adjacencies(G, article_categories_file)
@@ -85,3 +67,18 @@ if __name__ == '__main__':
 		if ((i+1) % 1) == 0:
 			print(str(i+1)+" / "+str(len(cluster_names)))
 	pd.DataFrame.from_records(rows).to_csv(dataset_file)
+
+
+if __name__ == '__main__':
+	import argparse
+	parser = argparse.ArgumentParser()
+	parser.add_argument("article_categories_file")
+	parser.add_argument("adjacencies_file")
+	parser.add_argument("cluster_groupings_file")
+	parser.add_argument("cluster_names_file")
+	parser.add_argument("vector_file")
+	parser.add_argument("dataset_file")
+
+	args = parser.parse_args()
+
+	main(args.article_categories_file,args.adjacencies_file,args.cluster_groupings_file,args.cluster_names_file,args.vector_file,args.dataset_file)
