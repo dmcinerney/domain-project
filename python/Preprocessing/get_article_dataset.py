@@ -63,7 +63,7 @@ def main(article_categories_file,adjacencies_file,cluster_groupings_file,cluster
 	for i,(cluster_id,cluster_name) in enumerate(cluster_names):
 		#if i > 44: break
 		articles = get_cluster_articles(G,cluster_categories[cluster_id], vector_file)
-		rows.append(cluster_id,cluster_name,articles)
+		rows.append((cluster_id,cluster_name,articles))
 		if ((i+1) % 1) == 0:
 			print(str(i+1)+" / "+str(len(cluster_names)))
 	pd.DataFrame.from_records(rows).to_csv(dataset_file)
