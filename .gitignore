@@ -5,6 +5,7 @@
 # Operating System Files #
 ##########################
 *.DS_Store
+*.save
 
 # Special Files #
 #################

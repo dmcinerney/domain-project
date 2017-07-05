@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from sklearn.externals import joblib
 from sklearn import svm
@@ -14,11 +15,13 @@ def get_data(dataset_file):
 		Xy = []
 		names_dict = {}
 		for i,row in df.iterrows():
-			ytemp = row[0]
-			nametemp = row[1]
-			Xtemps = eval(row[2])
-			Xy.extend([(Xtemp, ytemp)for Xtemp in Xtemps])
-			names_dict[ytemp] = namestemp
+			ytemp = row[1]
+			nametemp = row[2]
+			Xtemps = eval(row[3])
+			Xy.extend([(Xtemp[1], ytemp) for Xtemp in Xtemps])
+			names_dict[ytemp] = nametemp
+			if (i+1)%1 == 0:
+				print(str(i+1)+" / "+str(df.shape[0]))
 		np.random.shuffle(Xy)
 		X, y = zip(*Xy)
 	return X, y, names_dict
