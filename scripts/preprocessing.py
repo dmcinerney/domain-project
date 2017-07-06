@@ -22,7 +22,6 @@ if __name__ == '__main__':
 	parser.add_argument("-d", "--make_dataset", action="store_true")
 	parser.add_argument("-t", "--train_classifiers", action="store_true")
 	parser.add_argument("-s", "--start_from_scratch", action="store_true")
-	parser.add_argument("-e", "--erase_temp", action="store_true")
 
 	args = parser.parse_args()
 
@@ -33,21 +32,29 @@ if __name__ == '__main__':
 	sys.path.append(path_to_repository)#FIXME: there is a lot of commentary on this, not sure if it's the right way to do it
 	models_folder = os.path.join(path_to_repository,"models")
 	preprocessing_folder = os.path.join(path_to_repository,"python/Preprocessing")
-	temp_folder = os.path.join(path_to_repository,"temp_preprocessing")
+
+	#handling cache folder
+	temp_folder = os.path.join(path_to_repository,"temp_preprocessing0")
+	if args.start_from_scratch:
+		i = 0
+		while os.path.isdir(temp_folder):
+			i += 1
+			temp_folder = temp_folder[:-len(str(i-1))] + str(i)
+		if i >= 5:
+			raise Exception("You should clean up your caches! There are already "+str(i)+" of them. No more are allowed. :(")
+	if not os.path.isdir(temp_folder):
+		os.system("mkdir "+temp_folder)
+	else:
+		print("defaulting to using \"temp_processing0\" as the curret cache")
 
 	#preprocessing file names
 	adjacencies_file = os.path.join(temp_folder,"adjacencies.txt")
 	cluster_groupings_file = os.path.join(temp_folder,"cluster_groupings.txt")
 	cluster_names_file = os.path.join(temp_folder,"cluster_names.txt")
 	dataset_file = os.path.join(temp_folder,"dataset.csv")
-	vectors_file = os.path.join(temp_folder,"vectors.csv") #FIXME: not sure what type of file this should be (same format as whatever Zhenya gives me maybe)
+	indices_file = os.path.join(temp_folder,"indices.pkl")
+	vectors_file = os.path.join(temp_folder,"vectors.npy")
 	classifiers_file = os.path.join(models_folder,"classifiers.pkl")
-
-	args = parser.parse_args()
-	if args.start_from_scratch:
-		os.system("rm -r "+temp_folder)
-	if not os.path.isdir(temp_folder):
-		os.system("mkdir "+temp_folder)
 
 	#run preprocessing pipeline
 	if args.make_adjacencies:
@@ -71,7 +78,7 @@ if __name__ == '__main__':
 		import python.Preprocessing.get_categories2 as getcategories
 		getcategories.main(adjacencies_file,cluster_groupings_file,cluster_names_file)
 	if args.create_vectors_file:
-		print("CREATING VECTOR FILE")
+		print("CREATING VECTOR FILES")
 		if not args.wiki_concrete_directory:
 			raise Exception("no concrete wikipedia directory!")
 		#FIXME: Need to do whatever Zhenya does to create the vectors file
@@ -88,7 +95,7 @@ if __name__ == '__main__':
 		os.system(command)
 		'''
 		import python.Preprocessing.get_article_dataset as makedataset
-		makedataset.main(args.article_categories_file,adjacencies_file,cluster_groupings_file,cluster_names_file,vectors_file,dataset_file)
+		makedataset.main(args.article_categories_file,adjacencies_file,cluster_groupings_file,cluster_names_file,indices_file,vectors_file,dataset_file)
 	if args.train_classifiers:
 		print("TRAINING CLASSIFIERS")
 		'''
@@ -98,6 +105,3 @@ if __name__ == '__main__':
 		'''
 		import python.Preprocessing.train_classifiers as trainclassifiers
 		trainclassifiers.main(dataset_file,classifiers_file)
-
-	if args.erase_temp:
-		os.system("rm -r "+temp_folder)
