@@ -2,7 +2,7 @@ import make_wiki_adjacencies
 import graph_manip
 import pandas as pd
 import numpy as np
-import pickle ps pkl
+import pickle as pkl
 #import concrete
 
 def get_cluster_names(cluster_names_file):

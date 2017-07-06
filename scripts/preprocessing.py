@@ -44,8 +44,9 @@ if __name__ == '__main__':
 			raise Exception("You should clean up your caches! There are already "+str(i)+" of them. No more are allowed. :(")
 	if not os.path.isdir(temp_folder):
 		os.system("mkdir "+temp_folder)
+		print("creating cache \""+temp_folder+"\"")
 	else:
-		print("defaulting to using \"temp_processing0\" as the curret cache")
+		print("defaulting to using \""+temp_folder+"\" as the current cache")
 
 	#preprocessing file names
 	adjacencies_file = os.path.join(temp_folder,"adjacencies.txt")
