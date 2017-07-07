@@ -28,19 +28,27 @@ def get_cluster_categories(cluster_groupings_file):
 
 def load_vectors(index_file,vector_file):
 	with open(index_file, "r") as title_to_index:
-		indecies = pkl.load(title_to_index)
+		indices = pkl.load(title_to_index)
 
 	vectors = np.load(vector_file)
 
-	return (indecies, vectors)
+	return (indices, vectors)
 
 def convert_title(title):
-	return title.replace("_"," ")
+	#FIXME: something weird going on with binary characters? u'\x81'? just converting it to string and hoping it's ok for now
+	newtitle = ""
+	for character in title:
+		newtitle += chr(ord(character))
+	return newtitle.replace("_"," ")
 
 def get_article_vector(title, vectors_obj):
-	indecies = vectors_obj[0]
+	indices = vectors_obj[0]
 	vectors = vectors_obj[1]
-	return vectors[indecies[convert_title(title)]]
+	key = convert_title(title)
+	if key in indices.keys():
+		return vectors[indices[convert_title(title)]]
+	else:
+		return "None"
 
 def get_cluster_articles(G, categories, vectors_obj):
 	articles = []
@@ -48,7 +56,9 @@ def get_cluster_articles(G, categories, vectors_obj):
 		if category in G.nodes():
 			for neighbor in G.neighbors(category):
 				if not (neighbor[:9] == "Category:"):
-					articles.append((neighbor,get_article_vectors(neighbor, vectors_obj)))
+					vector = get_article_vector(neighbor, vectors_obj)
+					if vector != "None":
+						articles.append((neighbor,vector))
 	return articles
 
 def main(article_categories_file,adjacencies_file,cluster_groupings_file,cluster_names_file,index_file,vector_file,dataset_file):
