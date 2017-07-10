@@ -50,8 +50,8 @@ if __name__ == '__main__':
 
 	#preprocessing file names
 	adjacencies_file = os.path.join(temp_folder,"adjacencies.txt")
-	cluster_groupings_file = os.path.join(temp_folder,"cluster_groupings.txt")
-	cluster_names_file = os.path.join(temp_folder,"cluster_names.txt")
+	cluster_groupings_file = os.path.join(temp_folder,"cluster_groupings.pkl")
+	cluster_names_file = os.path.join(temp_folder,"cluster_names.pkl")
 	dataset_file = os.path.join(temp_folder,"dataset.csv")
 	indices_file = os.path.join(temp_folder,"indices.pkl")
 	vectors_file = os.path.join(temp_folder,"vectors.npy")
@@ -76,7 +76,8 @@ if __name__ == '__main__':
 		print(command)
 		os.system(command)
 		'''
-		import python.Preprocessing.get_categories2 as getcategories
+		#import python.Preprocessing.get_categories2 as getcategories
+		import python.Preprocessing.get_categories3 as getcategories
 		getcategories.main(adjacencies_file,cluster_groupings_file,cluster_names_file)
 	if args.create_vectors_file:
 		print("CREATING VECTOR FILES")

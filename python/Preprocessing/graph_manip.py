@@ -119,7 +119,10 @@ def get_center_node(G):
 	node_centrality = max(((node,centrality) for node,centrality in centralities.items()), key=lambda x:x[1])
 	return node_centrality[0]
 
-def write_clusters(cluster_groupings_file, cluster_groupings, cluster_names_file, cluster_names):
+def write_clusters(cluster_groupings_file, cluster_groupings, cluster_names_file, cluster_names, verbose=False):
+	print("writing "+cluster_groupings+" clusters to files.")
+	if verbose:
+		print("The groups contain the following numbers of categories respectively: "+str([len(group) for cluster,group in cluster_groupings.items()]))
 	with open(cluster_groupings_file, "w") as groupfile:
 		'''
 		for cluster, nodes in cluster_groupings.items():
@@ -133,6 +136,7 @@ def write_clusters(cluster_groupings_file, cluster_groupings, cluster_names_file
 			namesfile.write(str(cluster)+" "+name+"\n")
 		'''
 		pkl.dump(cluster_names, namesfile)
+	print("done writing clusters to files")
 
 def compute_clustering(original_graph, components, number_of_clusters, cluster_groupings_file, cluster_names_file, topological_sorting_file=None):
 	print("computing clustering")
