@@ -48,7 +48,7 @@ def get_article_vector(title, vectors_obj):
 	if key in indices.keys():
 		return vectors[indices[convert_title(title)]]
 	else:
-		return "None"
+		return None
 
 def get_cluster_articles(G, categories, vectors_obj):
 	articles = []
@@ -57,7 +57,7 @@ def get_cluster_articles(G, categories, vectors_obj):
 			for neighbor in G.neighbors(category):
 				if not (neighbor[:9] == "Category:"):
 					vector = get_article_vector(neighbor, vectors_obj)
-					if vector != "None":
+					if type(vector) != type(None):
 						articles.append((neighbor,vector))
 	return articles
 
