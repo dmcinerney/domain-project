@@ -1,4 +1,5 @@
 from networkx import *
+import pickle as pkl
 
 def remove_nodes_if(G, should_remove):
 	usefull_nodes = []
@@ -118,6 +119,21 @@ def get_center_node(G):
 	node_centrality = max(((node,centrality) for node,centrality in centralities.items()), key=lambda x:x[1])
 	return node_centrality[0]
 
+def write_clusters(cluster_groupings_file, cluster_groupings, cluster_names_file, cluster_names):
+	with open(cluster_groupings_file, "w") as groupfile:
+		'''
+		for cluster, nodes in cluster_groupings.items():
+			groupfile.write(str(cluster)+" "+str(nodes)+"\n")
+		'''
+		pkl.dump(cluster_groupings, groupfile)
+
+	with open(cluster_names_file, "w") as namesfile:
+		'''
+		for cluster, name in cluster_names.items():
+			namesfile.write(str(cluster)+" "+name+"\n")
+		'''
+		pkl.dump(cluster_names, namesfile)
+
 def compute_clustering(original_graph, components, number_of_clusters, cluster_groupings_file, cluster_names_file, topological_sorting_file=None):
 	print("computing clustering")
 	from sklearn import cluster as cl
@@ -171,13 +187,7 @@ def compute_clustering(original_graph, components, number_of_clusters, cluster_g
 
 	### WRITE TO FILES ###
 	print("writing clusters to files")
-	with open(cluster_groupings_file, "w") as groupfile:
-		for cluster, nodes in cluster_groupings.items():
-			groupfile.write(str(cluster)+" "+str(nodes)+"\n")
-
-	with open(cluster_names_file, "w") as namesfile:
-		for cluster, name in cluster_names.items():
-			namesfile.write(str(cluster)+" "+name+"\n")
+	write_clusters(cluster_groupings_file, cluster_groupings, cluster_names_file, cluster_names)
 
 	if topological_sorting_file:
 		with open(topological_sorting_file, "w") as topfile:

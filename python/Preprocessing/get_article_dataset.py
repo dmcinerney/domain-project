@@ -6,6 +6,7 @@ import pickle as pkl
 #import concrete
 
 def get_cluster_names(cluster_names_file):
+	'''
 	cluster_names = []
 	with open(cluster_names_file, 'r') as clusternames:
 		for line in clusternames:
@@ -14,8 +15,12 @@ def get_cluster_names(cluster_names_file):
 			cluster_name = splitline[-1]
 			cluster_names.append((cluster_id,cluster_name))
 	return cluster_names
+	'''
+	with open(cluster_names_file, 'r') as clusternames:
+		return pkl.load(clusternames)
 
 def get_cluster_categories(cluster_groupings_file):
+	'''
 	cluster_groupings = {}
 	with open(cluster_groupings_file, 'r') as clustergroups:
 		for line in clustergroups:
@@ -25,6 +30,9 @@ def get_cluster_categories(cluster_groupings_file):
 			cluster_grouping = eval(line[len(cluster_id)+1:])
 			cluster_groupings[cluster_id] = cluster_grouping
 	return cluster_groupings
+	'''
+	with open(cluster_groupings_file, 'r') as clustergroups:
+		return pkl.load(clustergroups)
 
 def load_vectors(index_file,vector_file):
 	with open(index_file, "r") as title_to_index:
