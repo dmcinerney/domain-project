@@ -63,10 +63,13 @@ def get_cluster_articles(G, categories, vectors_obj):
 	for category in categories:
 		if category in G.nodes():
 			for neighbor in G.neighbors(category):
-				if not (neighbor[:9] == "Category:"):
+				if neighbor[:9] != "Category:":
 					vector = get_article_vector(neighbor, vectors_obj)
+					'''
 					if type(vector) != type(None):
 						articles.append((neighbor,vector))
+					'''
+					articles.append((neighbor,vector))
 	return articles
 
 def main(article_categories_file,adjacencies_file,cluster_groupings_file,cluster_names_file,index_file,vector_file,dataset_file):
@@ -84,18 +87,19 @@ def main(article_categories_file,adjacencies_file,cluster_groupings_file,cluster
 	'''
 	with open(dataset_file, "w") as datafile:
 		rows = []
-		for i,(cluster_id,cluster_name) in enumerate(cluster_names):
+		for i,(cluster_id,cluster_name) in enumerate(cluster_names.items()):
 			articles = get_cluster_articles(G,cluster_categories[cluster_id])
 			datafile.write(cluster_id+" "+cluster_name+" "+str(articles)+"\n")
 			if ((i+1) % 1) == 0:
 				print(str(i+1)+" / "+str(len(cluster_names)))
 	'''
 	rows = []
-	for i,(cluster_id,cluster_name) in enumerate(cluster_names):
+	for i,(cluster_id,cluster_name) in enumerate(cluster_names.items()):
 		#if i > 44: break
 		articles = get_cluster_articles(G,cluster_categories[cluster_id], vectors_obj)
 		rows.append((cluster_id,cluster_name,articles))
 		if ((i+1) % 1) == 0:
+			print("there are "+str(len(articles))+" articles in cluster "+str(i)+": "+cluster_name)
 			print(str(i+1)+" / "+str(len(cluster_names)))
 	pd.DataFrame.from_records(rows).to_csv(dataset_file)
 

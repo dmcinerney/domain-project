@@ -120,7 +120,7 @@ def get_center_node(G):
 	return node_centrality[0]
 
 def write_clusters(cluster_groupings_file, cluster_groupings, cluster_names_file, cluster_names, verbose=False):
-	print("writing "+cluster_groupings+" clusters to files.")
+	print("writing "+str(len(cluster_groupings))+" clusters to files.")
 	if verbose:
 		print("The groups contain the following numbers of categories respectively: "+str([len(group) for cluster,group in cluster_groupings.items()]))
 	with open(cluster_groupings_file, "w") as groupfile:
