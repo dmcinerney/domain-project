@@ -56,6 +56,8 @@ if __name__ == '__main__':
 	indices_file = os.path.join(temp_folder,"indices.pkl")
 	vectors_file = os.path.join(temp_folder,"vectors.npy")
 	classifiers_file = os.path.join(models_folder,"classifiers.pkl")
+	stats_file = os.path.join(temp_folder,"stats.csv")
+	vectorizer_file = os.path.join(models_folder,"vectorizer.pkl")
 
 	#run preprocessing pipeline
 	if args.make_adjacencies:
@@ -98,6 +100,10 @@ if __name__ == '__main__':
 		'''
 		import python.Preprocessing.get_article_dataset as makedataset
 		makedataset.main(args.article_categories_file,adjacencies_file,cluster_groupings_file,cluster_names_file,indices_file,vectors_file,dataset_file)
+	if args.train_classifiers:
+		print("COMPUTING STATISTICS")
+		import python.Preprocessing.stats as stats
+		stats.main(dataset_file,stats_file)
 	if args.train_classifiers:
 		print("TRAINING CLASSIFIERS")
 		'''

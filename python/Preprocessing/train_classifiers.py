@@ -4,7 +4,7 @@ from sklearn.externals import joblib
 from sklearn import svm
 import random
 import os
-import pickle
+import pickle as pkl
 
 def get_data(dataset_file):
 	with open(dataset_file, "r") as dataset:
@@ -47,7 +47,7 @@ def main(dataset_file, classifiers_file, classifier_type="svm"):
 
 	#POSSIBLE: could use joblib, but probably not a good idea
 	with open(classifiers_file, "wb") as classifiersfile:
-		classifiersfile.write(pickle.dumps(classifiers))
+		pkl.dumps(classifiers, classifiersfile)
 
 
 if __name__ == '__main__':
