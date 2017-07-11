@@ -21,7 +21,8 @@ if __name__ == '__main__':
 	parser.add_argument("-v", "--create_vectors_file", action="store_true")
 	parser.add_argument("-d", "--make_dataset", action="store_true")
 	parser.add_argument("-t", "--train_classifiers", action="store_true")
-	parser.add_argument("-s", "--start_from_scratch", action="store_true")
+	parser.add_argument("-S", "--start_from_scratch", action="store_true")
+	parser.add_argument("-s", "--compute_stats", action="store_true")
 
 	args = parser.parse_args()
 
@@ -100,7 +101,7 @@ if __name__ == '__main__':
 		'''
 		import python.Preprocessing.get_article_dataset as makedataset
 		makedataset.main(args.article_categories_file,adjacencies_file,cluster_groupings_file,cluster_names_file,indices_file,vectors_file,dataset_file)
-	if args.train_classifiers:
+	if args.compute_stats:
 		print("COMPUTING STATISTICS")
 		import python.Preprocessing.stats as stats
 		stats.main(dataset_file,stats_file)
