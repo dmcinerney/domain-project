@@ -18,7 +18,7 @@ def get_data(dataset_file):
 			ytemp = row[1]
 			nametemp = row[2]
 			Xtemps = eval(row[3])
-			Xy.extend([(Xtemp[1], ytemp) for Xtemp in Xtemps])
+			Xy.extend([(Xtemp[1], ytemp) for Xtemp in Xtemps if type(Xtemp[1]) != type(None)])
 			names_dict[ytemp] = nametemp
 			if (i+1)%1 == 0:
 				print(str(i+1)+" / "+str(df.shape[0]))

@@ -54,7 +54,7 @@ def get_article_vector(title, vectors_obj):
 	vectors = vectors_obj[1]
 	key = convert_title(title)
 	if key in indices.keys():
-		return vectors[indices[convert_title(title)]]
+		return vectors[indices[convert_title(title)]].tolist()
 	else:
 		return None
 
