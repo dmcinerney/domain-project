@@ -16,8 +16,8 @@ def main(input_file,cluster_groupings_file,cluster_names_file,from_dbpedia=False
 	cluster_names = {}
 	for i,node in enumerate(G.neighbors(root_node)):
 		#cluster_groupings[i] = [node]
-		cluster_groupings[i] = list(graph_manip.get_n_level_graph_from(G, node, graph_depth).nodes())
-		cluster_names[i] = node
+		cluster_groupings[str(i)] = list(graph_manip.get_n_level_graph_from(G, node, graph_depth).nodes())
+		cluster_names[str(i)] = node
 
 	graph_manip.write_clusters(cluster_groupings_file, cluster_groupings, cluster_names_file, cluster_names, verbose=True)
 

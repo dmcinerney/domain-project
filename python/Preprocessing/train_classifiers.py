@@ -22,7 +22,7 @@ def get_data(dataset_file):
 		Xy = []
 		names_dict = {}
 		for i,row in df.iterrows():
-			ytemp = row[1]
+			ytemp = str(row[1])
 			nametemp = row[2]
 			Xtemps = eval(row[3])
 			Xy.extend([(Xtemp[1], ytemp) for Xtemp in Xtemps if type(Xtemp[1]) != type(None)])
@@ -62,13 +62,14 @@ def main(dataset_file, classifiers_file, classifier_type):
 			pkl.dumps(classifiers, classifiersfile)
 	else:
 		mlb = MultiLabelBinarizer()
+		print(y)
 		ytemp = mlb.fit_transform(y)
 		ynames = list(mlb.classes_)
 		if classifier_id == -1:
 			clf = OneVsRestClassifier(KNeighborsClassifier()).fit(X,ytemp)
 
 		with open(classifiers_file, "wb") as classifiersfile:
-			pkl.dumps(clf, classifiersfile)
+			pkl.dump(clf, classifiersfile)
 
 
 if __name__ == '__main__':

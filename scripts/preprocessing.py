@@ -53,6 +53,9 @@ if __name__ == '__main__':
 		print("creating cache \""+temp_folder+"\"")
 	else:
 		print("defaulting to using \""+temp_folder+"\" as the current cache")
+	#creating model file
+	if not os.path.isdir(models_folder):
+		os.system("mkdir "+models_folder)
 
 	#preprocessing file names
 	adjacencies_file = os.path.join(temp_folder,"adjacencies.txt")
