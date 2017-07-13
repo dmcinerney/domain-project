@@ -43,8 +43,10 @@ def main(dataset_file,stats_file):
 	names.append("TOTAL")
 	means.append(np.mean(allvectors))
 	standard_deviations.append(np.linalg.norm(np.std(allvectors, axis=0)))
+	cluster_deviations = [np.linalg.norm(mean-means[-1]) for mean in means]
+	
 	print("TOTAL stdev is "+str(standard_deviations[-1]))
-	pd.DataFrame({"id":ids,"name":names,"standard_deviations":standard_deviations,"mean":means}).to_csv(stats_file)
+	pd.DataFrame({"id":ids,"name":names,"standard_deviations":standard_deviations,"mean":means, "cluster_deviation":cluster_deviations}).to_csv(stats_file)
 
 if __name__ == '__main__':
 	import argparse

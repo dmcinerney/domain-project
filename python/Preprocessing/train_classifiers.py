@@ -5,6 +5,13 @@ from sklearn import svm
 import random
 import os
 import pickle as pkl
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.multiclass import OneVsOneClassifier
+from sklearn.preprocessing import MultiLabelBinarizer
+from sklearn.neighbors import KNeighborsClassifier
+
+#multi types are < 0 and binary types are >= 0
+_classifier_types = {"knn_multi":-1,"svm_binary":0}
 
 def get_data(dataset_file):
 	with open(dataset_file, "r") as dataset:
@@ -26,28 +33,42 @@ def get_data(dataset_file):
 		X, y = zip(*Xy)
 	return X, y, names_dict
 
-def main(dataset_file, classifiers_file, classifier_type="svm"):
+def main(dataset_file, classifiers_file, classifier_type):
+
+	if classifier_type in _classifier_types.keys():
+		classifier_id = _classifier_types[classifier_type]
+	else:
+		raise Exception("No classifier by the name of "+classifier_type+" is available!")
+
 	X,y,names_dict = get_data(dataset_file)
 	clusterids = list(set(y))
-	classifiers = []
 
-	for clusterid in clusterids:
-		if classifier_type == "svm":
-			clf = svm.SVC()
-		else:
-			raise Exception("No classifier by that name is available!")
-		ytemp = []
-		for label in y:
-			if clusterid == label:
-				ytemp.append(1)
-			else:
-				ytemp.append(0)
-		clf.fit(X,ytemp)
-		classifiers.append(clusterid,names_dict[clusterid],clf)
+	if classifier_id >= 0:
+		classifiers = []
+		for clusterid in clusterids:
+			if classifier_id == 0:
+				clf = svm.SVC()
+			ytemp = []
+			for label in y:
+				if clusterid == label:
+					ytemp.append(1)
+				else:
+					ytemp.append(0)
+			clf.fit(X,ytemp)
+			classifiers.append(clusterid,names_dict[clusterid],clf)
 
-	#POSSIBLE: could use joblib, but probably not a good idea
-	with open(classifiers_file, "wb") as classifiersfile:
-		pkl.dumps(classifiers, classifiersfile)
+		#POSSIBLE: could use joblib, but probably not a good idea
+		with open(classifiers_file, "wb") as classifiersfile:
+			pkl.dumps(classifiers, classifiersfile)
+	else:
+		mlb = MultiLabelBinarizer()
+		ytemp = mlb.fit_transform(y)
+		ynames = list(mlb.classes_)
+		if classifier_id == -1:
+			clf = OneVsRestClassifier(KNeighborsClassifier()).fit(X,ytemp)
+
+		with open(classifiers_file, "wb") as classifiersfile:
+			pkl.dumps(clf, classifiersfile)
 
 
 if __name__ == '__main__':
@@ -55,8 +76,9 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument("dataset_file")
 	parser.add_argument("classifiers_file")
-	parser.add_argument("-c", "--classifier_type", type=str, default="svm")
+	parser.add_argument("classifier_type", help="The following are the possible options for different classifiers: knn_multi, svm_binary")
 
 	args = parser.parse_args()
 
-	main(args.dataset_file, args.classifiers_file, classifier_type=args.classifier_type)
+	#the allinone option is to train one multi-class classifier
+	main(args.dataset_file,args.classifiers_file,args.classifier_type)

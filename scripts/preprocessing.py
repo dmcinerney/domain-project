@@ -1,9 +1,12 @@
 #This is the script to run the complete pre-processing pipeline
 #this script should be run from the bottom level of the package
+'''
+example command line run with every possible option used (except redirects) (runs whole pipeline):
+python domain-project/scripts/preprocessing.py domain-project/ -l skos_categories_en.ttl -c article_categories_en.ttl -w /export/corpora4/concrete/wiki-en/ -m -g -v -d -s -t -S -C 
 
-#example command line run:
-#python domain-project/scripts/preprocessing.py domain-project/ -l skos_categories_en.ttl -c article_categories_en.ttl -w /export/corpora4/concrete/wiki-en/ -m -g -d -t
-
+more common, less complex example command line run (doesn't run whole pipeline so must have a cache):
+python domain-project/scripts/preprocessing.py domain-project/ -t -C knn_multi
+'''
 if __name__ == '__main__':
 	import argparse
 	import os
@@ -14,15 +17,17 @@ if __name__ == '__main__':
 	parser.add_argument("path_to_repository")
 	parser.add_argument("-l", "--category_links_file", type=str, default=None)
 	parser.add_argument("-c", "--article_categories_file", type=str, default=None)
-	parser.add_argument("-r", "--article_redirects_file", type=str, default=None)#may not include NOT CURRENTLY USED
+	parser.add_argument("-r", "--article_redirects_file", type=str, default=None)#FIXME: may not include NOT CURRENTLY USED
 	parser.add_argument("-w", "--wiki_concrete_directory", type=str, default=None)
 	parser.add_argument("-m", "--make_adjacencies", action="store_true")
 	parser.add_argument("-g", "--get_categories", action="store_true")
 	parser.add_argument("-v", "--create_vectors_file", action="store_true")
 	parser.add_argument("-d", "--make_dataset", action="store_true")
+	parser.add_argument("-s", "--compute_stats", action="store_true")
 	parser.add_argument("-t", "--train_classifiers", action="store_true")
 	parser.add_argument("-S", "--start_from_scratch", action="store_true")
-	parser.add_argument("-s", "--compute_stats", action="store_true")
+	parser.add_argument("-C", "--classifier_type", type=str, default="knn_multi")
+
 
 	args = parser.parse_args()
 
@@ -65,20 +70,10 @@ if __name__ == '__main__':
 		if not args.category_links_file:
 			raise Exception("no category links file!")
 		print("MAKING ADJACENCIES")
-		'''
-		command = "python "+os.path.join(preprocessing_folder,"make_wiki_adjacencies.py")+" "+args.category_links_file+" "+adjacencies_file
-		print(command)
-		os.system(command)
-		'''
 		import python.Preprocessing.make_wiki_adjacencies as make_adjacencies
 		make_adjacencies.main(args.category_links_file,adjacencies_file)
 	if args.get_categories:
 		print("GETTING CATEGORIES")
-		'''
-		command = "python "+os.path.join(preprocessing_folder,"get_categories2.py")+" "+adjacencies_file+" "+cluster_groupings_file+" "+cluster_names_file
-		print(command)
-		os.system(command)
-		'''
 		#import python.Preprocessing.get_categories2 as getcategories
 		import python.Preprocessing.get_categories3 as getcategories
 		getcategories.main(adjacencies_file,cluster_groupings_file,cluster_names_file)
@@ -94,11 +89,6 @@ if __name__ == '__main__':
 		if not args.article_categories_file:
 			raise Exception("no article categories file!")
 		print("GETTING ARTICLE DATASET")
-		'''
-		command = "python "+os.path.join(preprocessing_folder,"get_article_dataset.py")+" "+args.article_categories_file+" "+adjacencies_file+" "+cluster_groupings_file+" "+cluster_names_file+" "+vectors_file+" "+dataset_file
-		print(command)
-		os.system(command)
-		'''
 		import python.Preprocessing.get_article_dataset as makedataset
 		makedataset.main(args.article_categories_file,adjacencies_file,cluster_groupings_file,cluster_names_file,indices_file,vectors_file,dataset_file)
 	if args.compute_stats:
@@ -107,10 +97,5 @@ if __name__ == '__main__':
 		stats.main(dataset_file,stats_file)
 	if args.train_classifiers:
 		print("TRAINING CLASSIFIERS")
-		'''
-		command = "python "+os.path.join(preprocessing_folder,"train_classifiers.py")+" "+dataset_file+" "+classifiers_file
-		print(command)
-		os.system(command)
-		'''
 		import python.Preprocessing.train_classifiers as trainclassifiers
-		trainclassifiers.main(dataset_file,classifiers_file)
+		trainclassifiers.main(dataset_file,classifiers_file,args.classifier_type)
