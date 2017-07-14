@@ -65,7 +65,7 @@ if __name__ == '__main__':
 	indices_file = os.path.join(temp_folder,"indices.pkl")
 	vectors_file = os.path.join(temp_folder,"vectors.npy")
 	classifiers_file = os.path.join(models_folder,"classifiers.pkl")
-	classifierstype_file = os.path.join(models_folder,"classifierstype.pkl")
+	classifiertype_file = os.path.join(models_folder,"classifiertype.pkl")
 	stats_file = os.path.join(temp_folder,"stats.csv")
 	vectorizer_file = os.path.join(models_folder,"vectorizer.pkl")
 
@@ -102,4 +102,4 @@ if __name__ == '__main__':
 	if args.train_classifiers:
 		print("TRAINING CLASSIFIERS")
 		import python.Preprocessing.train_classifiers as trainclassifiers
-		trainclassifiers.main(dataset_file,classifiers_file,args.classifier_type,classifierstype_file)
+		trainclassifiers.main(dataset_file,classifiers_file,args.classifier_type,classifiertype_file)

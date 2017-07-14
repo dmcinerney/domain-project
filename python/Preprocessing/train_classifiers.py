@@ -33,7 +33,7 @@ def get_data(dataset_file):
 		X, y = zip(*Xy)
 	return X, y, names_dict
 
-def main(dataset_file, classifiers_file, classifier_type, classifierstype_file):
+def main(dataset_file, classifiers_file, classifier_type, classifiertype_file):
 
 	if classifier_type in _classifier_types.keys():
 		classifier_id = _classifier_types[classifier_type]
@@ -81,9 +81,9 @@ if __name__ == '__main__':
 	parser.add_argument("dataset_file")
 	parser.add_argument("classifiers_file")
 	parser.add_argument("classifier_type", help="The following are the possible options for different classifiers: "+str(_classifier_types.keys()))
-	parser.add_argument("classifierstype_file")
+	parser.add_argument("classifiertype_file")
 
 	args = parser.parse_args()
 
 	#the allinone option is to train one multi-class classifier
-	main(args.dataset_file,args.classifiers_file,args.classifier_type,args.classifierstype_file)
+	main(args.dataset_file,args.classifiers_file,args.classifier_type,args.classifiertype_file)

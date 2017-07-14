@@ -17,8 +17,9 @@ def get_vectors(vectors_file):
 if __name__ == '__main__':
 	import argparse
 	import os
-	import python.QueryTimeProcessing.DomainClassifier as domainclassifier
+	import sys
 	import pandas as pd
+	import pickle as pkl
 	parser = argparse.ArgumentParser()
 
 	#FIXME: may want to add "help=" to all of these
@@ -56,8 +57,8 @@ if __name__ == '__main__':
 
 	#query-time processing file names
 	classifiers_file = os.path.join(models_folder,"classifiers.pkl")
-	classifierstype_file = os.path.join(models_folder,"classifierstype.pkl")
-	if classifier_option == "neuralnet":
+	classifiertype_file = os.path.join(models_folder,"classifiertype.pkl")
+	if args.classifier_option == "neuralnet":
 		neuralnet_file = os.path.join(models_folder,"nueralnet.pkl")
 	else:
 		neuralnet_file = None
@@ -68,9 +69,16 @@ if __name__ == '__main__':
 	vectorizer_file = os.path.join(models_folder,"vectorizer.pkl")
 	
 	#run query-time processing pipeline
-	classifier = domainclassifier.DomainClassifier(classifiers_file, args.query_term, option=args.classifier_option, neuralnet_file=neuralnet_file)
+	import python.QueryTimeProcessing.DomainClassifier as domainclassifier
+	with open(classifiertype_file, "rb") as classifiertypefile:
+		classifier_type = pkl.load(classifiertypefile)
+	if classifier_type[-5:] == "multi":
+		allinone = True
+	else:
+		allinone = False
+	classifier = domainclassifier.DomainClassifier(classifiers_file, args.query_term, option=args.classifier_option, neuralnet_file=neuralnet_file, allinone=allinone)
 	with open(domainclassifier_file, "wb") as classifierfile:
-		pickle.dump(classifier, classifierfile)
+		pkl.dump(classifier, classifierfile)
 
 	if args.vectors_file or args.articles_file:
 		if not args.vectors_file:

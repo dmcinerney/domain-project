@@ -11,8 +11,11 @@ class DomainClassifier:
 			else:
 				self.neuralnet_file = neuralnet_file
 		with open(classifiers_file, "rb") as classifiersfile:
-			self.classifiers = pickle.loads(classifiersfile)
-		print("Making classifier from "+str(len(self.classifiers))+" subclassifiers")
+			self.classifiers = pickle.load(classifiersfile)
+		if not self.allinone:
+			print("Making classifier from "+str(len(self.classifiers))+" subclassifiers")
+		else:
+			pass
 
 	def predict(self, vector):
 		if self.allinone:
