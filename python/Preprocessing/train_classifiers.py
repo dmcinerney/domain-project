@@ -33,7 +33,7 @@ def get_data(dataset_file):
 		X, y = zip(*Xy)
 	return X, y, names_dict
 
-def main(dataset_file, classifiers_file, classifier_type):
+def main(dataset_file, classifiers_file, classifier_type, classifierstype_file):
 
 	if classifier_type in _classifier_types.keys():
 		classifier_id = _classifier_types[classifier_type]
@@ -71,15 +71,19 @@ def main(dataset_file, classifiers_file, classifier_type):
 		with open(classifiers_file, "wb") as classifiersfile:
 			pkl.dump(clf, classifiersfile)
 
+	with open(classifiertype_file, "wb") as classifierstypefile:
+		pkl.dump(classifier_type, classifierstypefile)
+
 
 if __name__ == '__main__':
 	import argparse
 	parser = argparse.ArgumentParser()
 	parser.add_argument("dataset_file")
 	parser.add_argument("classifiers_file")
-	parser.add_argument("classifier_type", help="The following are the possible options for different classifiers: knn_multi, svm_binary")
+	parser.add_argument("classifier_type", help="The following are the possible options for different classifiers: "+str(_classifier_types.keys()))
+	parser.add_argument("classifierstype_file")
 
 	args = parser.parse_args()
 
 	#the allinone option is to train one multi-class classifier
-	main(args.dataset_file,args.classifiers_file,args.classifier_type)
+	main(args.dataset_file,args.classifiers_file,args.classifier_type,args.classifierstype_file)

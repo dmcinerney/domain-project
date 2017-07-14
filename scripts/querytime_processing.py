@@ -11,6 +11,9 @@ def check_if_vectorized(csv_file):
 def produce_vectorized_file(file):
 	pass
 
+def get_vectors(vectors_file):
+	pass
+
 if __name__ == '__main__':
 	import argparse
 	import os
@@ -23,41 +26,51 @@ if __name__ == '__main__':
 	parser.add_argument("query_term")
 	parser.add_argument("-a", "--articles_file", type=str, default=None)
 	parser.add_argument("-v", "--vectors_file", type=str, default=None)
-	parser.add_argument("-o", "--classifier_option", type=str, default=None)
-	parser.add_argument("-s", "--start_from_scratch", action="store_true")
-	parser.add_argument("-e", "--erase_temp", action="store_true")
+	parser.add_argument("-O", "--classifier_option", type=str, default=None)
+	parser.add_argument("-S", "--start_from_scratch", action="store_true")
 
 	args = parser.parse_args()
 
 	initial_working_directory = os.getcwd()
-	os.chdir(args.path_to_repository)
 
 	#query-time processing path names
-	models_folder = "models"
-	preprocessing_folder = "python/QueryTimeProcessing"
-	temp_folder = "temp_querytime"
+	path_to_repository = os.path.join(initial_working_directory,args.path_to_repository)
+	sys.path.append(path_to_repository)#FIXME: there is a lot of commentary on this, not sure if it's the right way to do it
+	models_folder = os.path.join(path_to_repository,"models")
+	querytime_processing_folder = os.path.join(path_to_repository,"python/QueryTimeProcessing")
+
+	#handling cache folder
+	temp_folder = os.path.join(path_to_repository,"temp_querytime0")
+	if args.start_from_scratch:
+		i = 0
+		while os.path.isdir(temp_folder):
+			i += 1
+			temp_folder = temp_folder[:-len(str(i-1))] + str(i)
+		if i >= 5:
+			raise Exception("You should clean up your caches! There are already "+str(i)+" of them. No more are allowed. :(")
+	if not os.path.isdir(temp_folder):
+		os.system("mkdir "+temp_folder)
+		print("creating cache \""+temp_folder+"\"")
+	else:
+		print("defaulting to using \""+temp_folder+"\" as the current cache")
 
 	#query-time processing file names
-	vectors_file = os.path.join(temp_folder,"vectors.csv")
 	classifiers_file = os.path.join(models_folder,"classifiers.pkl")
+	classifierstype_file = os.path.join(models_folder,"classifierstype.pkl")
 	if classifier_option == "neuralnet":
 		neuralnet_file = os.path.join(models_folder,"nueralnet.pkl")
 	else:
 		neuralnet_file = None
 	domainclassifier_file = os.path.join(models_folder,"domain_classifier.pkl")
-	vectors_file = os.path.join(temp_folder,"vectors.csv") #FIXME: not sure what type of file this should be (same format as whatever Zhenya gives me maybe)
-	predictions_file = "predictions.csv"
-
-	args = parser.parse_args()
-	if args.start_from_scratch:
-		os.system("rm -r "+temp_folder)
-	if not os.path.isdir(temp_folder):
-		os.system("mkdir "+temp_folder)
-
+	dataset_file = os.path.join(temp_folder,"dataset.csv")
+	indices_file = os.path.join(temp_folder,"indices.pkl")
+	vectors_file = os.path.join(temp_folder,"vectors.npy")
+	vectorizer_file = os.path.join(models_folder,"vectorizer.pkl")
+	
 	#run query-time processing pipeline
 	classifier = domainclassifier.DomainClassifier(classifiers_file, args.query_term, option=args.classifier_option, neuralnet_file=neuralnet_file)
 	with open(domainclassifier_file, "wb") as classifierfile:
-		classifierfile.write(pickle.dumps(classifier))
+		pickle.dump(classifier, classifierfile)
 
 	if args.vectors_file or args.articles_file:
 		if not args.vectors_file:
@@ -76,8 +89,3 @@ if __name__ == '__main__':
 			accuracy = None
 		rows = [(name, prediction) for name, prediction in zip(names, predictions)]
 		pd.DataFrame.from_records(rows).to_csv(predictions_file)
-
-	if args.erase_temp:
-		os.system("rm -r "+temp_folder)
-
-	os.chdir(initial_working_directory)

@@ -1,9 +1,10 @@
 import pickle
 
 class DomainClassifier:
-	def __init__(self, classifiers_file, query_term, option="cosine_sim", neuralnet_file=None):
+	def __init__(self, classifiers_file, query_term, option="cosine_sim", neuralnet_file=None, allinone=False):
 		self.option = option
 		self.query_term = query_term
+		self.allinone = allinone
 		if neuralnet_file:
 			if option != "neuralnet":
 				print("Warning: no need to give neural network file because it is not being used.  (Set option to \"neuralnet\" if you would like to use it.)")
@@ -14,7 +15,12 @@ class DomainClassifier:
 		print("Making classifier from "+str(len(self.classifiers))+" subclassifiers")
 
 	def predict(self, vector):
-		predictions = [(clusterid,name,clf.predict(vector)) for clusterid,name,clf in self.classifiers]
+		if self.allinone:
+			predictions = self.classifiers.predict(vector)
+			#need to convert to multiclass labels
+			raise NotImplementedError
+		else:
+			predictions = [(clusterid,name,clf.predict(vector)) for clusterid,name,clf in self.classifiers]
 
 		final_prediction = None
 
