@@ -44,10 +44,13 @@ def load_vectors(index_file,vector_file):
 
 def convert_title(title):
 	#FIXME: something weird going on with binary characters? u'\x81'? just converting it to string and hoping it's ok for now
+	'''
 	newtitle = ""
 	for character in title:
 		newtitle += chr(ord(character))
 	return newtitle.replace("_"," ")
+	'''
+	return title
 
 def get_article_vector(title, vectors_obj):
 	indices = vectors_obj[0]

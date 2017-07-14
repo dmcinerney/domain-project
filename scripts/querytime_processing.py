@@ -11,8 +11,23 @@ def check_if_vectorized(csv_file):
 def produce_vectorized_file(file):
 	pass
 
-def get_vectors(vectors_file):
-	pass
+def get_vectors(indices_file, vectors_file, labels_file=None):
+	import python.Preprocessing.get_article_dataset as get_article_dataset
+	vectors_obj = get_article_dataset.load_vectors(indices_file, vectors_file)
+	titles = vectors_obj[0].keys()
+	names = []
+	vectors = []
+	labels = None
+	if labels_file:
+		with open(labels_file, "r") as labelsfile:
+			labels_dict = pkl.load(labelsfile)
+		labels = []
+	for title in titles:
+		names.append(title)
+		vectors.append(get_article_dataset.get_article_vector(title, vectors_obj))
+		if labels_file:
+			labels.append(labels_dict[title])
+	return names, vectors, labels
 
 if __name__ == '__main__':
 	import argparse
@@ -26,7 +41,6 @@ if __name__ == '__main__':
 	parser.add_argument("path_to_repository")
 	parser.add_argument("query_term")
 	parser.add_argument("-a", "--articles_file", type=str, default=None)
-	parser.add_argument("-v", "--vectors_file", type=str, default=None)
 	parser.add_argument("-O", "--classifier_option", type=str, default=None)
 	parser.add_argument("-S", "--start_from_scratch", action="store_true")
 
@@ -80,16 +94,12 @@ if __name__ == '__main__':
 	with open(domainclassifier_file, "wb") as classifierfile:
 		pkl.dump(classifier, classifierfile)
 
-	if args.vectors_file or args.articles_file:
-		if not args.vectors_file:
+	if args.articles_file or (os.path.isfile(vectors_file) and os.path.isfile(indices_file)):
+		if not (os.path.isfile(vectors_file) and os.path.isfile(indices_file)):
 			print("CREATING VECTOR FILE")
-			if not args.articles_file:
-				raise Exception("no articles file!")
 			raise NotImplementedError
-		else:
-			vectors_file = args.vectors_file
 
-		names, vectors, labels = get_vectors(vectors_file)
+		names, vectors, labels = get_vectors(indices_file, vectors_file)
 		if labels:
 			predictions, accuracy = classifier.compute_accuracy(vectors, labels)
 		else:
@@ -97,3 +107,4 @@ if __name__ == '__main__':
 			accuracy = None
 		rows = [(name, prediction) for name, prediction in zip(names, predictions)]
 		pd.DataFrame.from_records(rows).to_csv(predictions_file)
+		print("done")
