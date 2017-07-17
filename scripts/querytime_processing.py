@@ -11,7 +11,18 @@ def check_if_vectorized(csv_file):
 def produce_vectorized_file(file):
 	pass
 
+def convert_name(name):#FIXME: why is this necessary, change it
+	newname = ""
+	for character in name:
+		try:
+			newname += character.encode()
+		except UnicodeEncodeError:
+			print("excluding characters")
+	return newname
+
 def get_vectors(indices_file, vectors_file, labels_file=None):
+	printnum = 10
+	print("loading the the article vectors")
 	import python.Preprocessing.get_article_dataset as get_article_dataset
 	vectors_obj = get_article_dataset.load_vectors(indices_file, vectors_file)
 	titles = vectors_obj[0].keys()
@@ -22,11 +33,20 @@ def get_vectors(indices_file, vectors_file, labels_file=None):
 		with open(labels_file, "r") as labelsfile:
 			labels_dict = pkl.load(labelsfile)
 		labels = []
-	for title in titles:
+	print("compiling dataset")
+	for i,title in enumerate(titles[:100]):#FIXME: this is temporary
+		vector = get_article_dataset.get_article_vector(title, vectors_obj)
+		if type(vector) == type(None):
+			print("No vector for "+title+" so excluding example from set")
+			if (i+1) % printnum == 0:
+				print(str(i+1)+" / "+str(len(titles)))
+			continue
 		names.append(title)
-		vectors.append(get_article_dataset.get_article_vector(title, vectors_obj))
+		vectors.append(vector)
 		if labels_file:
 			labels.append(labels_dict[title])
+		if (i+1) % printnum == 0:
+			print(str(i+1)+" / "+str(len(titles)))
 	return names, vectors, labels
 
 if __name__ == '__main__':
@@ -81,6 +101,7 @@ if __name__ == '__main__':
 	indices_file = os.path.join(temp_folder,"indices.pkl")
 	vectors_file = os.path.join(temp_folder,"vectors.npy")
 	vectorizer_file = os.path.join(models_folder,"vectorizer.pkl")
+	predictions_file = os.path.join(temp_folder,"predictions.csv")
 	
 	#run query-time processing pipeline
 	import python.QueryTimeProcessing.DomainClassifier as domainclassifier
@@ -103,8 +124,8 @@ if __name__ == '__main__':
 		if labels:
 			predictions, accuracy = classifier.compute_accuracy(vectors, labels)
 		else:
-			predictions = classifier.get_predictions(vectors)
+			predictions = classifier.predict(vectors)
 			accuracy = None
-		rows = [(name, prediction) for name, prediction in zip(names, predictions)]
+		rows = [(convert_name(name), prediction) for name, prediction in zip(names, predictions)]
 		pd.DataFrame.from_records(rows).to_csv(predictions_file)
 		print("done")
