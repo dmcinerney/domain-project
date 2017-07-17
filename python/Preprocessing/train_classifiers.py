@@ -74,7 +74,7 @@ def main(dataset_file, classifiers_file, classifier_type):
 		if type_id == -1:
 			classifiers = OneVsRestClassifier(KNeighborsClassifier()).fit(X,ytemp)
 
-	clftuple = (classifier_type,clustersids,clusternames,classifiers)
+	clftuple = (classifier_type,clusterids,clusternames,classifiers)
 
 	with open(classifiers_file, "wb") as classifiersfile:
 		pkl.dump(clftuple, classifiersfile)

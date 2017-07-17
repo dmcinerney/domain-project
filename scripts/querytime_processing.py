@@ -2,7 +2,7 @@
 #this script should be run from the bottom level of the package
 
 #example command line run:
-#python domain-project/scripts/preprocessing.py domain-project/ NOT DONE YET
+#python domain-project/scripts/querytime_processing.py domain-project/ sports
 
 #FIXME: add a file to tell what settings were used
 
@@ -122,5 +122,6 @@ if __name__ == '__main__':
 			predictions = classifier.predict(vectors)
 			accuracy = None
 		names = [convert_name(name) for name in names]
-		pd.DataFrame.from_records({"names":names,"predictions_for:"+str(classifier.clusters):predictions}).to_csv(predictions_file)
+		predictions = [str(prediction) for prediction in predictions]
+		pd.DataFrame({"names":names,"predictions_for:"+str(classifier.clusters):predictions}).to_csv(predictions_file)
 		print("done")
