@@ -4,6 +4,8 @@
 #example command line run:
 #python domain-project/scripts/preprocessing.py domain-project/ NOT DONE YET
 
+#FIXME: add a file to tell what settings were used
+
 def check_if_vectorized(csv_file):
 	pass
 
@@ -91,7 +93,6 @@ if __name__ == '__main__':
 
 	#query-time processing file names
 	classifiers_file = os.path.join(models_folder,"classifiers.pkl")
-	classifiertype_file = os.path.join(models_folder,"classifiertype.pkl")
 	if args.classifier_option == "neuralnet":
 		neuralnet_file = os.path.join(models_folder,"nueralnet.pkl")
 	else:
@@ -105,13 +106,7 @@ if __name__ == '__main__':
 	
 	#run query-time processing pipeline
 	import python.QueryTimeProcessing.DomainClassifier as domainclassifier
-	with open(classifiertype_file, "rb") as classifiertypefile:
-		classifier_type = pkl.load(classifiertypefile)
-	if classifier_type[-5:] == "multi":
-		allinone = True
-	else:
-		allinone = False
-	classifier = domainclassifier.DomainClassifier(classifiers_file, args.query_term, option=args.classifier_option, neuralnet_file=neuralnet_file, allinone=allinone)
+	classifier = domainclassifier.DomainClassifier(classifiers_file, args.query_term, option=args.classifier_option, neuralnet_file=neuralnet_file)
 	with open(domainclassifier_file, "wb") as classifierfile:
 		pkl.dump(classifier, classifierfile)
 
@@ -126,6 +121,6 @@ if __name__ == '__main__':
 		else:
 			predictions = classifier.predict(vectors)
 			accuracy = None
-		rows = [(convert_name(name), prediction) for name, prediction in zip(names, predictions)]
-		pd.DataFrame.from_records(rows).to_csv(predictions_file)
+		names = [convert_name(name) for name in names]
+		pd.DataFrame.from_records({"names":names,"predictions_for:"+str(classifier.clusters):predictions}).to_csv(predictions_file)
 		print("done")

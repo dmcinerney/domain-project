@@ -33,20 +33,22 @@ def get_data(dataset_file):
 		X, y = zip(*Xy)
 	return X, y, names_dict
 
-def main(dataset_file, classifiers_file, classifier_type, classifiertype_file):
+def main(dataset_file, classifiers_file, classifier_type):
 
 	if classifier_type in _classifier_types.keys():
-		classifier_id = _classifier_types[classifier_type]
+		type_id = _classifier_types[classifier_type]
 	else:
 		raise Exception("No classifier by the name of "+classifier_type+" is available!")
 
 	X,y,names_dict = get_data(dataset_file)
 	clusterids = list(set(y))
 
-	if classifier_id >= 0:
+	if type_id >= 0:
+		clusterids = []
+		clusternames = []
 		classifiers = []
 		for clusterid in clusterids:
-			if classifier_id == 0:
+			if type_id == 0:
 				clf = svm.SVC()
 			ytemp = []
 			for label in y:
@@ -55,7 +57,9 @@ def main(dataset_file, classifiers_file, classifier_type, classifiertype_file):
 				else:
 					ytemp.append(0)
 			clf.fit(X,ytemp)
-			classifiers.append(clusterid,names_dict[clusterid],clf)
+			clusterids.append(clusterid)
+			clusternames.append(names_dict[clusterid])
+			classifiers.append(clf)
 
 		#POSSIBLE: could use joblib, but probably not a good idea
 		with open(classifiers_file, "wb") as classifiersfile:
@@ -64,15 +68,16 @@ def main(dataset_file, classifiers_file, classifier_type, classifiertype_file):
 		mlb = MultiLabelBinarizer()
 		print(y)
 		ytemp = mlb.fit_transform(y)
-		ynames = list(mlb.classes_)
-		if classifier_id == -1:
-			clf = OneVsRestClassifier(KNeighborsClassifier()).fit(X,ytemp)
+		clusterids = list(mlb.classes_)
+		clusternames = [names_dict[clusterid] for clusterid in clusterids]
 
-		with open(classifiers_file, "wb") as classifiersfile:
-			pkl.dump(clf, classifiersfile)
+		if type_id == -1:
+			classifiers = OneVsRestClassifier(KNeighborsClassifier()).fit(X,ytemp)
 
-	with open(classifiertype_file, "wb") as classifierstypefile:
-		pkl.dump(classifier_type, classifierstypefile)
+	clftuple = (classifier_type,clustersids,clusternames,classifiers)
+
+	with open(classifiers_file, "wb") as classifiersfile:
+		pkl.dump(clftuple, classifiersfile)
 
 
 if __name__ == '__main__':
@@ -81,9 +86,8 @@ if __name__ == '__main__':
 	parser.add_argument("dataset_file")
 	parser.add_argument("classifiers_file")
 	parser.add_argument("classifier_type", help="The following are the possible options for different classifiers: "+str(_classifier_types.keys()))
-	parser.add_argument("classifiertype_file")
 
 	args = parser.parse_args()
 
 	#the allinone option is to train one multi-class classifier
-	main(args.dataset_file,args.classifiers_file,args.classifier_type,args.classifiertype_file)
+	main(args.dataset_file,args.classifiers_file,args.classifier_type)

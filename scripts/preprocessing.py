@@ -7,6 +7,7 @@ python domain-project/scripts/preprocessing.py domain-project/ -l skos_categorie
 more common, less complex example command line run (doesn't run whole pipeline so must have a cache):
 python domain-project/scripts/preprocessing.py domain-project/ -t -C knn_multi
 '''
+#FIXME: add a file to tell what settings were used
 if __name__ == '__main__':
 	import argparse
 	import os
@@ -65,7 +66,6 @@ if __name__ == '__main__':
 	indices_file = os.path.join(temp_folder,"indices.pkl")
 	vectors_file = os.path.join(temp_folder,"vectors.npy")
 	classifiers_file = os.path.join(models_folder,"classifiers.pkl")
-	classifiertype_file = os.path.join(models_folder,"classifiertype.pkl")
 	stats_file = os.path.join(temp_folder,"stats.csv")
 	vectorizer_file = os.path.join(models_folder,"vectorizer.pkl")
 
@@ -102,4 +102,4 @@ if __name__ == '__main__':
 	if args.train_classifiers:
 		print("TRAINING CLASSIFIERS")
 		import python.Preprocessing.train_classifiers as trainclassifiers
-		trainclassifiers.main(dataset_file,classifiers_file,args.classifier_type,classifiertype_file)
+		trainclassifiers.main(dataset_file,classifiers_file,args.classifier_type)

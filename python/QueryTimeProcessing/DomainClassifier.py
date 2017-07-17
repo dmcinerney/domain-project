@@ -1,25 +1,25 @@
 import pickle
 
 class DomainClassifier:
-	def __init__(self, classifiers_file, query_term, option="cosine_sim", neuralnet_file=None, allinone=False):
+	def __init__(self, classifiers_file, query_term, option="cosine_sim", neuralnet_file=None):
 		self.option = option
 		self.query_term = query_term
-		self.allinone = allinone
 		if neuralnet_file:
 			if option != "neuralnet":
 				print("Warning: no need to give neural network file because it is not being used.  (Set option to \"neuralnet\" if you would like to use it.)")
 			else:
 				self.neuralnet_file = neuralnet_file
 		with open(classifiers_file, "rb") as classifiersfile:
-			self.classifiers = pickle.load(classifiersfile)
-		if not self.allinone:
+			(self.clftype,ids,names,self.classifiers) = pickle.load(classifiersfile)
+			self.clusters = zip(ids,names)
+		if type(self.classifiers) == list:
 			print("Making classifier from "+str(len(self.classifiers))+" subclassifiers")
 		else:
 			pass
 
 	def predict(self, vectors):
 		print("getting predictions")
-		if self.allinone:
+		if type(self.classifiers) != list:
 			predictions = self.classifiers.predict(vectors)
 			#need to convert to multiclass labels
 			#FIXME: need to finish this functionality
