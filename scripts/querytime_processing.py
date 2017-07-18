@@ -24,7 +24,7 @@ def select_titles(titles, labels_file):
 			for Xtemp in Xtemps:
 				finaltitles.append(Xtemp[0])
 				labels[Xtemp[0]] = ytemp
-	with open(labels_file, "r") as labelsfile:
+	with open(labels_file, "w") as labelsfile:
 		pkl.dump(labels, labelsfile)
 	return finaltitles
 
@@ -76,8 +76,9 @@ if __name__ == '__main__':
 
 	#FIXME: may want to add "help=" to all of these
 	parser.add_argument("path_to_repository")
-	parser.add_argument("query_term")
+	parser.add_argument("-q", "--query_term", type=str, default=None)
 	parser.add_argument("-a", "--articles_file", type=str, default=None)
+	parser.add_argument("-e", "--embeddings_file", type=str, default=None)
 	parser.add_argument("-O", "--classifier_option", type=str, default=None)
 	parser.add_argument("-S", "--start_from_scratch", action="store_true")
 
@@ -122,7 +123,7 @@ if __name__ == '__main__':
 	
 	#run query-time processing pipeline
 	import python.QueryTimeProcessing.DomainClassifier as domainclassifier
-	classifier = domainclassifier.DomainClassifier(classifiers_file, args.query_term, option=args.classifier_option, neuralnet_file=neuralnet_file)
+	classifier = domainclassifier.DomainClassifier(classifiers_file, query_term=args.query_term, option=args.classifier_option, embeddings_file=args.embeddings_file, neuralnet_file=neuralnet_file)
 	with open(domainclassifier_file, "wb") as classifierfile:
 		pkl.dump(classifier, classifierfile)
 
