@@ -6,7 +6,7 @@ def main(input_file,cluster_groupings_file,cluster_names_file,from_dbpedia=False
 	topological_sorting_file = None
 	#topological_sorting_file = "temp/topological_sorting.txt"
 	root_node = "Category:Main_topic_classifications"
-	graph_depth = 0
+	graph_depth = 2
 
 	if from_dbpedia:
 		G = make_wiki_adjacencies.add_adjacencies(graph_manip.DiGraph(),input_file)

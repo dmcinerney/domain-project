@@ -28,4 +28,3 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 
 	main(args.input_file,args.cluster_groupings_file,args.cluster_names_file,from_dbpedia=args.from_dbpedia)
-
