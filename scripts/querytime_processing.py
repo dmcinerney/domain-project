@@ -6,10 +6,29 @@
 
 #FIXME: add a file to tell what settings were used
 
-def check_if_vectorized(csv_file):
-	pass
+import argparse
+import os
+import sys
+import pandas as pd
+import pickle as pkl
 
-#returns vectorized file's name
+def select_titles(titles, labels_file):
+	#FIXME: this is a temporary solution (should get a real dev set)
+	finaltitles = []
+	labels = {}
+	with open("domain-project/temp_preprocessing0/dataset.csv", "r") as dataset:
+		df = pd.read_csv(dataset)
+		for i,row in df.iterrows():
+			Xtemps = eval(row[3])
+			ytemp = str(row[1])
+			for Xtemp in Xtemps:
+				finaltitles.append(Xtemp[0])
+				labels[Xtemp[0]] = ytemp
+	with open(labels_file, "r") as labelsfile:
+		pkl.dump(labels, labelsfile)
+	return finaltitles
+
+
 def produce_vectorized_file(file):
 	pass
 
@@ -28,10 +47,11 @@ def get_vectors(indices_file, vectors_file, labels_file=None):
 	import python.Preprocessing.get_article_dataset as get_article_dataset
 	vectors_obj = get_article_dataset.load_vectors(indices_file, vectors_file)
 	titles = vectors_obj[0].keys()
+	titles = select_titles(titles, labels_file)
 	names = []
 	vectors = []
 	labels = None
-	if labels_file:
+	if labels_file and os.path.isfile(labels_file):
 		with open(labels_file, "r") as labelsfile:
 			labels_dict = pkl.load(labelsfile)
 		labels = []
@@ -52,11 +72,6 @@ def get_vectors(indices_file, vectors_file, labels_file=None):
 	return names, vectors, labels
 
 if __name__ == '__main__':
-	import argparse
-	import os
-	import sys
-	import pandas as pd
-	import pickle as pkl
 	parser = argparse.ArgumentParser()
 
 	#FIXME: may want to add "help=" to all of these
@@ -101,6 +116,7 @@ if __name__ == '__main__':
 	dataset_file = os.path.join(temp_folder,"dataset.csv")
 	indices_file = os.path.join(temp_folder,"indices.pkl")
 	vectors_file = os.path.join(temp_folder,"vectors.npy")
+	labels_file = os.path.join(temp_folder,"labels.pkl")
 	vectorizer_file = os.path.join(models_folder,"vectorizer.pkl")
 	predictions_file = os.path.join(temp_folder,"predictions.csv")
 	
@@ -115,7 +131,7 @@ if __name__ == '__main__':
 			print("CREATING VECTOR FILE")
 			raise NotImplementedError
 
-		names, vectors, labels = get_vectors(indices_file, vectors_file)
+		names, vectors, labels = get_vectors(indices_file, vectors_file, labels_file=labels_file)
 		if labels:
 			predictions, accuracy = classifier.compute_accuracy(vectors, labels)
 		else:
