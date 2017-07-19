@@ -6,9 +6,8 @@ def top_category(prediction):
 
 
 class DomainClassifier:
+	options = ["cosine_sim", "neuralnet"]
 	def __init__(self, classifiers_file, query_term=None, option=None, neuralnet_file=None, embeddings_file=None):
-		self.option = option
-		self.query_term = query_term
 		with open(classifiers_file, "rb") as classifiersfile:
 			(self.clftype,ids,names,self.classifiers) = pkl.load(classifiersfile)
 			self.clusters = zip(ids,names)
@@ -17,18 +16,30 @@ class DomainClassifier:
 		else:
 			print("Making classifier from one "+str(len(self.clusters))+"-class "+self.clftype+" classifier")
 
+		self.query_term = query_term
+		self.option = option
 
-		if embeddings_file or self.option == "cosine_sim":
-			if self.option != "cosine_sim":
-				print("Warning: no need to give embeddings file because it is not being used.  (Set option to \"cosine_sim\" if you would like to use it.)")
+		if self.query_term:
+			if self.option not in self.options:
+				raise Exception("No option specified for producing binary classification for domain term!")
 			else:
-				self.weights = None
-				raise NotImplementedError
-		if neuralnet_file or self.option == "neuralnet":
-			if self.option != "neuralnet":
-				print("Warning: no need to give neural network file because it is not being used.  (Set option to \"neuralnet\" if you would like to use it.)")
-			else:
-				raise NotImplementedError
+				if embeddings_file or self.option == "cosine_sim":
+					if self.option != "cosine_sim":
+						print("Warning: no need to give embeddings file because it is not being used.  (Set option to \"cosine_sim\" if you would like to use it.)")
+					else:
+						self.weights = []
+						import python.Preprocessing.make_wiki_adjacencies as make_wiki_adjacencies
+						embeddings = make_wiki_adjacencies.get_embeddings(embeddings_file)
+						domain_rep = make_wiki_adjacencies.get_embedding_rep(query_term.split(), embeddings)
+						for cluster_id,cluster_name in self.clusters:
+							embedding_rep = make_wiki_adjacencies.get_embedding_rep(cluster_name[9:].split(), embeddings) #FIXME: there could be a different way to come up with embeddings for cluster names
+							self.weights.append(make_wiki_adjacencies.get_cosine_sim(domain_rep,embedding_rep))
+						self.weights = np.divide(self.weights,np.linalg.norm(self.weights))
+				if neuralnet_file or self.option == "neuralnet":
+					if self.option != "neuralnet":
+						print("Warning: no need to give neural network file because it is not being used.  (Set option to \"neuralnet\" if you would like to use it.)")
+					else:
+						raise NotImplementedError
 
 	def predict(self, vectors, returnboth=False):
 		print("getting predictions")

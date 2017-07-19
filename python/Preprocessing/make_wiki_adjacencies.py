@@ -14,7 +14,7 @@ def get_embeddings(glovefile):
 
 	return embeddings
 
-#takes in words and embeddings and calculates the final vector embedding and returns it in a numpy array
+#takes in words and embeddings and calculates the final vector embedding (as average) and returns it in a numpy array
 def get_embedding_rep(words, embeddings):
 	final_vector = np.zeros(len(embeddings[embeddings.keys()[0]]))
 	#print(final_vector)
@@ -28,6 +28,8 @@ def get_embedding_rep(words, embeddings):
 		#print(str(i)+" / "+str(len(words)), word)
 	if num_embedded_words != 0:
 		final_vector /= num_embedded_words
+	else:
+		print("Warning: returning an array of zeros because none of the words had embeddings!")
 
 	return final_vector
 
@@ -39,6 +41,9 @@ def get_stop_words(stopwords_file):
 				if line[0] != "#":
 					dumbwords.append(line.strip())
 	return dumbwords
+
+def get_cosine_sim(rep1, rep2):
+	return np.divide(float(np.dot(rep1,rep2)),(np.linalg.norm(rep1)*np.linalg.norm(rep2)))
 
 def add_adjacencies(G,input_filename,embeddings_file=None,stopwords_file=None,only_attached=False):
 	print("loading adjacencies from dbpedia file ("+input_filename+")")
@@ -77,7 +82,7 @@ def add_adjacencies(G,input_filename,embeddings_file=None,stopwords_file=None,on
 				#print(len(words1),len(words2))
 				rep1 = get_embedding_rep(words1,embeddings)
 				rep2 = get_embedding_rep(words2,embeddings)
-				cosine_sim = np.dot(rep1,rep2)/(np.linalg.norm(rep1)*np.linalg.norm(rep2))
+				cosine_sim = get_cosine_sim(rep1, rep2)
 
 				G.add_edge(page2,page1,weight=cosine_sim)
 			else:
