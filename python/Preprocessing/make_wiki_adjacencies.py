@@ -29,7 +29,9 @@ def get_embedding_rep(words, embeddings):
 	if num_embedded_words != 0:
 		final_vector /= num_embedded_words
 	else:
-		print("Warning: returning an array of zeros because none of the words had embeddings!")
+		#print("Warning: returning an array of zeros because none of the words have embeddings!")
+		print("Warning: none of the words have embeddings!")
+		return None
 
 	return final_vector
 
@@ -82,6 +84,13 @@ def add_adjacencies(G,input_filename,embeddings_file=None,stopwords_file=None,on
 				#print(len(words1),len(words2))
 				rep1 = get_embedding_rep(words1,embeddings)
 				rep2 = get_embedding_rep(words2,embeddings)
+				#FIXME: is this the right move?
+				if not rep1:
+					G.remove(page1)
+					continue
+				if not rep2:
+					G.remove(page1)
+					continue
 				cosine_sim = get_cosine_sim(rep1, rep2)
 
 				G.add_edge(page2,page1,weight=cosine_sim)
@@ -97,7 +106,6 @@ def write_adjacency_file(G, adjacencies_file):
 		for node in G.nodes():
 			adjfile.write(node+" "+str([(n, G.edge[node][n]["weight"]) for n in G.neighbors(node)])+"\n")
 	print("done writing to file")
-
 
 '''
 "/Users/jeredmcinerney/Desktop/Intelellectual/glove/glove.6B.300d.txt"

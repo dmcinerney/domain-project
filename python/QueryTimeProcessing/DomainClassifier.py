@@ -34,7 +34,7 @@ class DomainClassifier:
 						for cluster_id,cluster_name in self.clusters:
 							embedding_rep = make_wiki_adjacencies.get_embedding_rep(cluster_name[9:].split(), embeddings) #FIXME: there could be a different way to come up with embeddings for cluster names
 							self.weights.append(make_wiki_adjacencies.get_cosine_sim(domain_rep,embedding_rep))
-						self.weights = np.divide(self.weights,np.linalg.norm(self.weights))
+						self.weights = np.divide(self.weights,sum(weights))
 				if neuralnet_file or self.option == "neuralnet":
 					if self.option != "neuralnet":
 						print("Warning: no need to give neural network file because it is not being used.  (Set option to \"neuralnet\" if you would like to use it.)")
@@ -81,8 +81,12 @@ class DomainClassifier:
 		print("computing accuracy")
 		correct = 0
 		for i,prediction in enumerate(predictions):
-			if top_category(labels[i]) == top_category(prediction):
-				correct += 1
+			if self.query_term == None:#then label and prediction are each lists
+				if top_category(labels[i]) == top_category(prediction):
+					correct += 1
+			else:#label and prediction are each a boolean value
+				if labels[i] == top_category:
+					correct += 1
 		accuracy = float(correct)/len(predictions)
 		print("accuracy: "+str(accuracy))
 		return predictions, accuracy

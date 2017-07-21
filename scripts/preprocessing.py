@@ -78,8 +78,8 @@ if __name__ == '__main__':
 		make_adjacencies.main(args.category_links_file,adjacencies_file)
 	if args.get_categories:
 		print("GETTING CATEGORIES")
-		#import python.Preprocessing.get_categories2 as getcategories
-		import python.Preprocessing.get_categories3 as getcategories
+		import python.Preprocessing.get_categories2 as getcategories
+		#import python.Preprocessing.get_categories3 as getcategories
 		getcategories.main(adjacencies_file,cluster_groupings_file,cluster_names_file)
 	if args.create_vectors_file:
 		print("CREATING VECTOR FILES")
