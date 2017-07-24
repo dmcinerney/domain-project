@@ -6,7 +6,8 @@ def main(input_file,cluster_groupings_file,cluster_names_file,from_dbpedia=False
 	topological_sorting_file = None
 	#topological_sorting_file = "temp/topological_sorting.txt"
 	root_node = "Category:Main_topic_classifications"
-	graph_depth = 2
+	top_depth = 2
+	cluster_depth = 1
 
 	if from_dbpedia:
 		G = make_wiki_adjacencies.add_adjacencies(graph_manip.DiGraph(),input_file)
@@ -14,9 +15,11 @@ def main(input_file,cluster_groupings_file,cluster_names_file,from_dbpedia=False
 		G = graph_manip.load_graph(input_file)
 	cluster_groupings = {}
 	cluster_names = {}
-	for i,node in enumerate(G.neighbors(root_node)):
+	cluster_tops = graph_manip.get_n_level_graph_from(G, root_node, top_depth, leaf_nodes=True)
+
+	for i,node in enumerate(cluster_tops):
 		#cluster_groupings[i] = [node]
-		cluster_groupings[str(i)] = list(graph_manip.get_n_level_graph_from(G, node, graph_depth).nodes())
+		cluster_groupings[str(i)] = list(graph_manip.get_n_level_graph_from(G, node, cluster_depth).nodes())
 		cluster_names[str(i)] = node
 
 	graph_manip.write_clusters(cluster_groupings_file, cluster_groupings, cluster_names_file, cluster_names, verbose=True)

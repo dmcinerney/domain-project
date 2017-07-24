@@ -21,6 +21,7 @@ if __name__ == '__main__':
 	parser.add_argument("-c", "--article_categories_file", type=str, default=None)
 	parser.add_argument("-r", "--article_redirects_file", type=str, default=None)#FIXME: may not include NOT CURRENTLY USED
 	parser.add_argument("-w", "--wiki_concrete_directory", type=str, default=None)
+	parser.add_argument("-e", "--embeddings_file", type=str, default=None)
 	parser.add_argument("-m", "--make_adjacencies", action="store_true")
 	parser.add_argument("-g", "--get_categories", action="store_true")
 	parser.add_argument("-v", "--create_vectors_file", action="store_true")
@@ -79,8 +80,8 @@ if __name__ == '__main__':
 		make_adjacencies.main(args.category_links_file,adjacencies_file,embeddings_file=args.embeddings_file)
 	if args.get_categories:
 		print("GETTING CATEGORIES")
-		#import python.Preprocessing.get_categories2 as getcategories
-		import python.Preprocessing.get_categories3 as getcategories
+		import python.Preprocessing.get_categories2 as getcategories
+		#import python.Preprocessing.get_categories3 as getcategories
 		getcategories.main(adjacencies_file,cluster_groupings_file,cluster_names_file)
 	if args.create_vectors_file:
 		print("CREATING VECTOR FILES")

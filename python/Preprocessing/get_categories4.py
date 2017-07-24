@@ -6,12 +6,14 @@ def main(input_file,cluster_groupings_file,cluster_names_file,from_dbpedia=False
 	topological_sorting_file = None
 	root_node = "Category:Main_topic_classifications"
 	graph_depth = 3
+	n_nodes = 1000
 
 	if from_dbpedia:
 		G = make_wiki_adjacencies.add_adjacencies(graph_manip.DiGraph(),input_file)
 	else:
 		G = graph_manip.load_graph(input_file)
-	new_graph = graph_manip.get_n_level_graph_from(G, root_node, graph_depth)
+	#could also use popularity to weight random sampling
+	new_graph = graph_manip.sample_graph(G, n_nodes)
 
 	graph_manip.compute_clustering(G, [new_graph], number_of_clusters, cluster_groupings_file, cluster_names_file, topological_sorting_file)
 

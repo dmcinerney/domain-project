@@ -200,7 +200,7 @@ def compute_clustering(original_graph, components, number_of_clusters, cluster_g
 					topfile.write(node+"\n")
 				topfile.write("\n")
 
-def get_n_level_graph_from(original_graph, root, n):
+def get_n_level_graph_from(original_graph, root, n, leaf_nodes=False):
 	prev_nodes = [root]
 	saved_nodes = set([root])
 	for i in range(n):
@@ -211,4 +211,34 @@ def get_n_level_graph_from(original_graph, root, n):
 		prev_nodes = neighbors
 		print(str(len(saved_nodes))+" nodes")
 		print(str(i+1)+" / "+str(n))
-	return subgraph(original_graph, saved_nodes)
+	if leaf_nodes:
+		return prev_nodes
+	else:
+		return subgraph(original_graph, saved_nodes)
+
+def choose_nodes(nodes, n_nodes, distribution=None):
+	if distribution == None:#uniform distribution
+		np.random.shuffle(nodes)
+		return nodes[:n_nodes]
+	else:#use distrubtion specified
+		raise NotImplementedError
+
+def sample_graph(original_graph, n_nodes):
+	if n_nodes > len(original_graph.nodes()):
+		print("Warning: there are only "+str(len(original_graph.nodes()))+" nodes in the graph, not "+str(n_nodes)+", so returning whole graph")
+		return original_graph
+	nodes = list(original_graph.nodes())
+	
+	nodes = choose_nodes(nodes, n_nodes)
+	new_graph = Graph()
+	for node1 in nodes:
+		new_graph.add_node(node1)
+		for node2 in nodes:
+			if node2 == node1: continue
+			new_graph.add_node(node2)
+			path = shortest_path(G,source=node1,target=node2)
+			new_weight = mul(G[node][path[i+1]]["weight"] for i,node in enumerate(path[:-1]))
+			new_graph.add_edge(node1,node2,weight=new_weight)
+	return new_graph
+
+

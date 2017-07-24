@@ -2,7 +2,7 @@
 #this script should be run from the bottom level of the package
 
 #example command line run:
-#python domain-project/scripts/querytime_processing.py domain-project/ sports
+#python domain-project/scripts/querytime_processing.py domain-project/ -q sports
 
 #FIXME: add a file to tell what settings were used
 
@@ -56,7 +56,7 @@ def get_vectors(indices_file, vectors_file, labels_file=None):
 			labels_dict = pkl.load(labelsfile)
 		labels = []
 	print("compiling dataset")
-	for i,title in enumerate(titles[:100]):#FIXME: this is temporary
+	for i,title in enumerate(titles[:1000]):#FIXME: this is temporary
 		vector = get_article_dataset.get_article_vector(title, vectors_obj)
 		if type(vector) == type(None):
 			print("No vector for "+title+" so excluding example from set")
@@ -65,7 +65,7 @@ def get_vectors(indices_file, vectors_file, labels_file=None):
 			continue
 		names.append(title)
 		vectors.append(vector)
-		if labels_file:
+		if type(labels) != type(None):
 			labels.append(labels_dict[title])
 		if (i+1) % printnum == 0:
 			print(str(i+1)+" / "+str(len(titles)))
@@ -134,11 +134,17 @@ if __name__ == '__main__':
 
 		names, vectors, labels = get_vectors(indices_file, vectors_file, labels_file=labels_file)
 		if labels:
-			predictions, accuracy = classifier.compute_accuracy(vectors, labels)
+			predictions_orig, predictions, accuracy = classifier.compute_accuracy(vectors, labels)
 		else:
-			predictions = classifier.predict(vectors)
+			predictions_orig, predictions = classifier.predict(vectors)
 			accuracy = None
 		names = [convert_name(name) for name in names]
-		predictions = [str(prediction) for prediction in predictions]
-		pd.DataFrame({"names":names,"predictions_for:"+str(classifier.clusters):predictions}).to_csv(predictions_file)
+		predictions_dict = {"names":names, "predictions_for:"+str(classifier.clusters):predictions_orig}
+		if type(predictions) != type(None):
+			predictions = [str(prediction) for prediction in predictions]
+			predictions_dict["predictions_for:"+args.query_term] = predictions
+		if labels:
+			predictions_dict["labels"] = labels
+		print(str([(key,len(value)) for key,value in predictions_dict.items()]))
+		pd.DataFrame(predictions_dict).to_csv(predictions_file)
 		print("done")
