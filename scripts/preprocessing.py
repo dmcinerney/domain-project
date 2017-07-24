@@ -17,6 +17,7 @@ if __name__ == '__main__':
 	#FIXME: may want to add "help=" to all of these
 	parser.add_argument("path_to_repository")
 	parser.add_argument("-l", "--category_links_file", type=str, default=None)
+	parser.add_argument("-e", "--embeddings_file", type=str, default=None)
 	parser.add_argument("-c", "--article_categories_file", type=str, default=None)
 	parser.add_argument("-r", "--article_redirects_file", type=str, default=None)#FIXME: may not include NOT CURRENTLY USED
 	parser.add_argument("-w", "--wiki_concrete_directory", type=str, default=None)
@@ -75,7 +76,7 @@ if __name__ == '__main__':
 			raise Exception("no category links file!")
 		print("MAKING ADJACENCIES")
 		import python.Preprocessing.make_wiki_adjacencies as make_adjacencies
-		make_adjacencies.main(args.category_links_file,adjacencies_file)
+		make_adjacencies.main(args.category_links_file,adjacencies_file,embeddings_file=args.embeddings_file)
 	if args.get_categories:
 		print("GETTING CATEGORIES")
 		#import python.Preprocessing.get_categories2 as getcategories

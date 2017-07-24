@@ -41,13 +41,12 @@ def main(dataset_file, classifiers_file, classifier_type):
 		raise Exception("No classifier by the name of "+classifier_type+" is available!")
 
 	X,y,names_dict = get_data(dataset_file)
-	clusterids = list(set(y))
 
 	if type_id >= 0:
 		clusterids = []
 		clusternames = []
 		classifiers = []
-		for clusterid in clusterids:
+		for clusterid in list(set(y)):
 			if type_id == 0:
 				clf = svm.SVC()
 			ytemp = []
@@ -60,13 +59,8 @@ def main(dataset_file, classifiers_file, classifier_type):
 			clusterids.append(clusterid)
 			clusternames.append(names_dict[clusterid])
 			classifiers.append(clf)
-
-		#POSSIBLE: could use joblib, but probably not a good idea
-		with open(classifiers_file, "wb") as classifiersfile:
-			pkl.dumps(classifiers, classifiersfile)
 	else:
 		mlb = MultiLabelBinarizer()
-		print(y)
 		ytemp = mlb.fit_transform(y)
 		clusterids = list(mlb.classes_)
 		clusternames = [names_dict[clusterid] for clusterid in clusterids]

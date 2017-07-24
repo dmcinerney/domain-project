@@ -9,6 +9,8 @@ class DomainClassifier:
 	def __init__(self, classifiers_file, query_term=None, option=None, neuralnet_file=None, embeddings_file=None):
 		self.option = option
 		self.query_term = query_term
+		if self.query_term and not self.option:
+			raise Exception("No option specified! Please specify with the command line option \"-O\"")
 		with open(classifiers_file, "rb") as classifiersfile:
 			(self.clftype,ids,names,self.classifiers) = pkl.load(classifiersfile)
 			self.clusters = zip(ids,names)
@@ -72,7 +74,7 @@ class DomainClassifier:
 		for i,prediction in enumerate(predictions):
 			if top_category(labels[i]) == top_category(prediction):
 				correct += 1
+		print("number of examples: "+str(len(predictions)))
 		accuracy = float(correct)/len(predictions)
 		print("accuracy: "+str(accuracy))
 		return predictions, accuracy
-
