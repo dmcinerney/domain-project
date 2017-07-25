@@ -43,7 +43,7 @@ def convert_name(name):#FIXME: why is this necessary, change it
 
 def get_vectors(indices_file, vectors_file, labels_file=None):
 	printnum = 10
-	print("loading the the article vectors")
+	print("loading the article vectors")
 	import python.Preprocessing.get_article_dataset as get_article_dataset
 	vectors_obj = get_article_dataset.load_vectors(indices_file, vectors_file)
 	titles = vectors_obj[0].keys()
@@ -56,8 +56,8 @@ def get_vectors(indices_file, vectors_file, labels_file=None):
 			labels_dict = pkl.load(labelsfile)
 		labels = []
 	print("compiling dataset")
-	for i,title in enumerate(titles[:1000]):#FIXME: this is temporary
-		vector = get_article_dataset.get_article_vector(title, vectors_obj)
+	for i,title in enumerate(titles[:100]):#FIXME: this is temporary
+		vector = get_article_dataset.get_article_vector(title.replace("_"," "), vectors_obj)
 		if type(vector) == type(None):
 			print("No vector for "+title+" so excluding example from set")
 			if (i+1) % printnum == 0:
@@ -139,9 +139,9 @@ if __name__ == '__main__':
 			predictions_orig, predictions = classifier.predict(vectors)
 			accuracy = None
 		names = [convert_name(name) for name in names]
+		predictions_orig = [str(prediction) for prediction in predictions_orig]
 		predictions_dict = {"names":names, "predictions_for:"+str(classifier.clusters):predictions_orig}
 		if type(predictions) != type(None):
-			predictions = [str(prediction) for prediction in predictions]
 			predictions_dict["predictions_for:"+args.query_term] = predictions
 		if labels:
 			predictions_dict["labels"] = labels

@@ -51,7 +51,7 @@ class DomainClassifier:
 		else:
 			#contains lists of predictions for each predictor
 			predictions = [clf.predict(vectors) for clf in self.classifiers]
-
+			predictions = np.transpose(predictions)
 
 		if self.query_term == None or self.option == None:
 			if returnboth:

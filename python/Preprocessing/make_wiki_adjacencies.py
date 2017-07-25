@@ -85,11 +85,11 @@ def add_adjacencies(G,input_filename,embeddings_file=None,stopwords_file=None,on
 				rep1 = get_embedding_rep(words1,embeddings)
 				rep2 = get_embedding_rep(words2,embeddings)
 				#FIXME: is this the right move?
-				if not rep1:
-					G.remove(page1)
+				if type(rep1) == type(None):
+					G.remove_node(page1)
 					continue
-				if not rep2:
-					G.remove(page1)
+				if type(rep2) == type(None):
+					G.remove_node(page1)
 					continue
 				cosine_sim = get_cosine_sim(rep1, rep2)
 

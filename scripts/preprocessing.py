@@ -21,7 +21,6 @@ if __name__ == '__main__':
 	parser.add_argument("-c", "--article_categories_file", type=str, default=None)
 	parser.add_argument("-r", "--article_redirects_file", type=str, default=None)#FIXME: may not include NOT CURRENTLY USED
 	parser.add_argument("-w", "--wiki_concrete_directory", type=str, default=None)
-	parser.add_argument("-e", "--embeddings_file", type=str, default=None)
 	parser.add_argument("-m", "--make_adjacencies", action="store_true")
 	parser.add_argument("-g", "--get_categories", action="store_true")
 	parser.add_argument("-v", "--create_vectors_file", action="store_true")
