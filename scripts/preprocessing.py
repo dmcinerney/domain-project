@@ -7,6 +7,23 @@ python domain-project/scripts/preprocessing.py domain-project/ -l skos_categorie
 more common, less complex example command line run (doesn't run whole pipeline so must have a cache):
 python domain-project/scripts/preprocessing.py domain-project/ -t -C knn_multi
 '''
+def save_cache(save_cache_as, path_to_repository, temp_folder):
+	if save_cache_as:
+		saved_caches_folder = os.path.join(path_to_repository,"saved_caches")
+		if not os.path.isdir(saved_caches_folder):
+			print("saving cache as \""+saved_cache+"\"")
+			os.system("mkdir "+saved_caches_folder)
+		saved_cache = os.path.join(saved_caches_folder,save_cache_as)
+		i = 0
+		while os.path.isfile(saved_cache):
+			if i == 0:
+				saved_cache = saved_cache+"_"+str(i)
+			else:
+				saved_cache = saved_cache[:-len(str(i-1))]+"_"+str(i)
+			i += 1
+		print("saving cache as \""+saved_cache+"\"")
+		os.system("cp -r "+temp_folder+"/* "+saved_cache)
+
 #FIXME: add a file to tell what settings were used
 if __name__ == '__main__':
 	import argparse
@@ -27,9 +44,8 @@ if __name__ == '__main__':
 	parser.add_argument("-d", "--make_dataset", action="store_true")
 	parser.add_argument("-s", "--compute_stats", action="store_true")
 	parser.add_argument("-t", "--train_classifiers", action="store_true")
-	parser.add_argument("-S", "--start_from_scratch", action="store_true")
+	parser.add_argument("-S", "--save_cache_as", type=str, default=None)
 	parser.add_argument("-C", "--classifier_type", type=str, default="knn_multi")
-
 
 	args = parser.parse_args()
 
@@ -42,21 +58,13 @@ if __name__ == '__main__':
 	preprocessing_folder = os.path.join(path_to_repository,"python/Preprocessing")
 
 	#handling cache folder
-	temp_folder = os.path.join(path_to_repository,"temp_preprocessing0")
-	if args.start_from_scratch:
-		i = 0
-		while os.path.isdir(temp_folder):
-			i += 1
-			temp_folder = temp_folder[:-len(str(i-1))] + str(i)
-		if i >= 5:
-			raise Exception("You should clean up your caches! There are already "+str(i)+" of them. No more are allowed. :(")
+	temp_folder = os.path.join(path_to_repository,"temp_preprocessing")
 	if not os.path.isdir(temp_folder):
-		os.system("mkdir "+temp_folder)
 		print("creating cache \""+temp_folder+"\"")
-	else:
-		print("defaulting to using \""+temp_folder+"\" as the current cache")
+		os.system("mkdir "+temp_folder)
 	#creating model file
 	if not os.path.isdir(models_folder):
+		print("making model folder \""+models_folder+"\"")
 		os.system("mkdir "+models_folder)
 
 	#preprocessing file names
@@ -104,3 +112,6 @@ if __name__ == '__main__':
 		print("TRAINING CLASSIFIERS")
 		import python.Preprocessing.train_classifiers as trainclassifiers
 		trainclassifiers.main(dataset_file,classifiers_file,args.classifier_type)
+
+	save_cache(args.save_cache_as, path_to_repository)
+

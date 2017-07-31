@@ -13,6 +13,7 @@ from sklearn.neighbors import KNeighborsClassifier
 #multi types are < 0 and binary types are >= 0
 _classifier_types = {"knn_multi":-1,"svm_binary":0}
 
+'''
 def get_data(dataset_file):
 	with open(dataset_file, "r") as dataset:
 		print("reading csv file ("+dataset_file+")")
@@ -32,19 +33,35 @@ def get_data(dataset_file):
 		np.random.shuffle(Xy)
 		X, y = zip(*Xy)
 	return X, y, names_dict
+'''
 
-def main(dataset_file, classifiers_file, classifier_type):
+def get_data(dataset_file):
+	with open(dataset_file, "r") as dataset:
+		print("reading csv file ("+dataset_file+")")
+		df = pd.read_csv(dataset)
+		names = []
+		X = []
+		y = []
+		for i,row in df.iterrows():
+			article = eval(row[1])
+			names.append(article[0])
+			X.append(article[1])
+			y.append(row[2])
+			if (i+1)%1 == 0:
+				print(str(i+1)+" / "+str(df.shape[0]))
+	return X, y, names
+
+def main(clusternames_file, dataset_file, classifiers_file, classifier_type):
 
 	if classifier_type in _classifier_types.keys():
 		type_id = _classifier_types[classifier_type]
 	else:
 		raise Exception("No classifier by the name of "+classifier_type+" is available!")
 
-	X,y,names_dict = get_data(dataset_file)
+	X,y, names = get_data(dataset_file)
 
 	if type_id >= 0:
 		clusterids = []
-		clusternames = []
 		classifiers = []
 		for clusterid in list(set(y)):
 			if type_id == 0:
@@ -57,16 +74,18 @@ def main(dataset_file, classifiers_file, classifier_type):
 					ytemp.append(0)
 			clf.fit(X,ytemp)
 			clusterids.append(clusterid)
-			clusternames.append(names_dict[clusterid])
 			classifiers.append(clf)
 	else:
 		mlb = MultiLabelBinarizer()
 		ytemp = mlb.fit_transform(y)
 		clusterids = list(mlb.classes_)
-		clusternames = [names_dict[clusterid] for clusterid in clusterids]
 
 		if type_id == -1:
 			classifiers = OneVsRestClassifier(KNeighborsClassifier()).fit(X,ytemp)
+
+	with open(clusternames_file, "rb") as clusternamesfile:
+		clusternamesdict = dict(pkl.load(clusternamesfile))
+	clusternames = [clusternamesdict[clusterid] for clusterid in clusterids]
 
 	clftuple = (classifier_type,clusterids,clusternames,classifiers)
 
@@ -77,6 +96,7 @@ def main(dataset_file, classifiers_file, classifier_type):
 if __name__ == '__main__':
 	import argparse
 	parser = argparse.ArgumentParser()
+	parser.add_argument("clusternames_file")
 	parser.add_argument("dataset_file")
 	parser.add_argument("classifiers_file")
 	parser.add_argument("classifier_type", help="The following are the possible options for different classifiers: "+str(_classifier_types.keys()))
@@ -84,4 +104,4 @@ if __name__ == '__main__':
 	args = parser.parse_args()
 
 	#the allinone option is to train one multi-class classifier
-	main(args.dataset_file,args.classifiers_file,args.classifier_type)
+	main(args.clusternames_file,args.dataset_file,args.classifiers_file,args.classifier_type)

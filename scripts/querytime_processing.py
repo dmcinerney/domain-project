@@ -41,6 +41,7 @@ def convert_name(name):#FIXME: why is this necessary, change it
 			print("excluding characters")
 	return newname
 
+'''
 def get_vectors(indices_file, vectors_file, labels_file=None):
 	printnum = 10
 	print("loading the article vectors")
@@ -70,6 +71,11 @@ def get_vectors(indices_file, vectors_file, labels_file=None):
 		if (i+1) % printnum == 0:
 			print(str(i+1)+" / "+str(len(titles)))
 	return names, vectors, labels
+'''
+
+def get_vectors(dataset_file):
+
+	return names, vectors, labels
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
@@ -80,7 +86,8 @@ if __name__ == '__main__':
 	parser.add_argument("-a", "--articles_file", type=str, default=None)
 	parser.add_argument("-e", "--embeddings_file", type=str, default=None)
 	parser.add_argument("-O", "--classifier_option", type=str, default=None)
-	parser.add_argument("-S", "--start_from_scratch", action="store_true")
+	parser.add_argument("-S", "--save_cache_as", type=str, default=None)
+	parser.add_argument("-d", "--use_dev_set", action="store_true")
 
 	args = parser.parse_args()
 
@@ -93,19 +100,10 @@ if __name__ == '__main__':
 	querytime_processing_folder = os.path.join(path_to_repository,"python/QueryTimeProcessing")
 
 	#handling cache folder
-	temp_folder = os.path.join(path_to_repository,"temp_querytime0")
-	if args.start_from_scratch:
-		i = 0
-		while os.path.isdir(temp_folder):
-			i += 1
-			temp_folder = temp_folder[:-len(str(i-1))] + str(i)
-		if i >= 5:
-			raise Exception("You should clean up your caches! There are already "+str(i)+" of them. No more are allowed. :(")
+	temp_folder = os.path.join(path_to_repository,"temp_querytime")
 	if not os.path.isdir(temp_folder):
 		os.system("mkdir "+temp_folder)
 		print("creating cache \""+temp_folder+"\"")
-	else:
-		print("defaulting to using \""+temp_folder+"\" as the current cache")
 
 	#query-time processing file names
 	classifiers_file = os.path.join(models_folder,"classifiers.pkl")
@@ -114,10 +112,14 @@ if __name__ == '__main__':
 	else:
 		neuralnet_file = None
 	domainclassifier_file = os.path.join(models_folder,"domain_classifier.pkl")
+	if args.use_dev_set:
+		dataset_file = os.path.join(path_to_repository,"temp_preprocessing/")
 	dataset_file = os.path.join(temp_folder,"dataset.csv")
+	'''
 	indices_file = os.path.join(temp_folder,"indices.pkl")
 	vectors_file = os.path.join(temp_folder,"vectors.npy")
 	labels_file = os.path.join(temp_folder,"labels.pkl")
+	'''
 	vectorizer_file = os.path.join(models_folder,"vectorizer.pkl")
 	predictions_file = os.path.join(temp_folder,"predictions.csv")
 	
@@ -128,11 +130,13 @@ if __name__ == '__main__':
 		pkl.dump(classifier, classifierfile)
 
 	if args.articles_file or (os.path.isfile(vectors_file) and os.path.isfile(indices_file)):
-		if not (os.path.isfile(vectors_file) and os.path.isfile(indices_file)):
+		#if not (os.path.isfile(vectors_file) and os.path.isfile(indices_file)):
+		if not os.path.isfile(dataset_file):
 			print("CREATING VECTOR FILE")
 			raise NotImplementedError
 
-		names, vectors, labels = get_vectors(indices_file, vectors_file, labels_file=labels_file)
+		#names, vectors, labels = get_vectors(indices_file, vectors_file, labels_file=labels_file)
+		names, vectors, labels = get_vectors(dataset_file)
 		if labels:
 			predictions_orig, predictions, accuracy = classifier.compute_accuracy(vectors, labels)
 		else:
@@ -145,6 +149,8 @@ if __name__ == '__main__':
 			predictions_dict["predictions_for:"+args.query_term] = predictions
 		if labels:
 			predictions_dict["labels"] = labels
-		print(str([(key,len(value)) for key,value in predictions_dict.items()]))
 		pd.DataFrame(predictions_dict).to_csv(predictions_file)
 		print("done")
+
+	import preprocessing
+	preprocessing.save_cache(args.save_cache_as, path_to_repository)

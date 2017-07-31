@@ -5,20 +5,6 @@ import numpy as np
 import pickle as pkl
 #import concrete
 
-def get_cluster_names(cluster_names_file):
-	'''
-	cluster_names = []
-	with open(cluster_names_file, 'r') as clusternames:
-		for line in clusternames:
-			splitline = line.strip().split()
-			cluster_id = " ".join(splitline[:2])
-			cluster_name = splitline[-1]
-			cluster_names.append((cluster_id,cluster_name))
-	return cluster_names
-	'''
-	with open(cluster_names_file, 'r') as clusternames:
-		return pkl.load(clusternames)
-
 def get_cluster_categories(cluster_groupings_file):
 	'''
 	cluster_groupings = {}
@@ -75,49 +61,61 @@ def get_cluster_articles(G, categories, vectors_obj):
 					articles.append((neighbor,vector))
 	return articles
 
-def main(article_categories_file,adjacencies_file,cluster_groupings_file,cluster_names_file,index_file,vector_file,dataset_file):
+def partition_dataset(rows, fraction_dev):
+	if type(rows) = str:
+		with open(rows, "r") as rowsfile:
+			df = pd.read_csv(dataset)
+			rows = [[row[1],row[2]] for i,row in df.iterrows()]
+	np.random.shuffle(rows)
+	#separate into train and test
+	numdev = int(len(rows)*fraction_dev)
+	dev_rows = rows[:numdev]
+	train_rows = rows[numdev:]
+
+	return train_rows, dev_rows
+
+def main(article_categories_file,cluster_groupings_file,index_file,vector_file,dataset_file,fraction_dev):
 	#attach articles to category graph
 	G = graph_manip.DiGraph()
 	make_wiki_adjacencies.add_adjacencies(G, article_categories_file)
 
-	#get cluster_names, cluster_categories from cluster_names_file and cluster_groupings_file
-	cluster_names = get_cluster_names(cluster_names_file)
+	#get cluster_names, cluster_categories from cluster_groupings_file
 	cluster_categories = get_cluster_categories(cluster_groupings_file)
 
 	vectors_obj = load_vectors(index_file, vector_file)
 
-	#For each category in each cluster, write out articles (from concrete) in that category to file (grouped by cluster)
-	'''
-	with open(dataset_file, "w") as datafile:
-		rows = []
-		for i,(cluster_id,cluster_name) in enumerate(cluster_names.items()):
-			articles = get_cluster_articles(G,cluster_categories[cluster_id])
-			datafile.write(cluster_id+" "+cluster_name+" "+str(articles)+"\n")
-			if ((i+1) % 1) == 0:
-				print(str(i+1)+" / "+str(len(cluster_names)))
-	'''
 	rows = []
+
+	#NO LONGER IN USE: For each category in each cluster, write out article titles and vectors in that category to file (grouped by cluster)
+	#write out article titles and vectors and labels sorted randomly and separated into dev and training set
 	for i,(cluster_id,cluster_name) in enumerate(cluster_names.items()):
 		#if i > 44: break
 		articles = get_cluster_articles(G,cluster_categories[cluster_id], vectors_obj)
-		rows.append((cluster_id,cluster_name,articles))
+		for article in articles:
+			rows.append(str(article),cluster_id)
+		#rows.append((cluster_id,cluster_name,articles))
 		if ((i+1) % 1) == 0:
 			print("there are "+str(len(articles))+" articles in cluster "+str(i)+": "+cluster_name)
 			print(str(i+1)+" / "+str(len(cluster_names)))
+	
+	np.random.shuffle(rows)
 	pd.DataFrame.from_records(rows).to_csv(dataset_file)
+
+	train_rows, dev_rows = partition_dataset(rows, fraction_dev)
+
+	pd.DataFrame.from_records(train_rows).to_csv(dataset_file[:-4]+"_train.csv")
+	pd.DataFrame.from_records(dev_rows).to_csv(dataset_file[:-4]+"_dev.csv")
 
 
 if __name__ == '__main__':
 	import argparse
 	parser = argparse.ArgumentParser()
 	parser.add_argument("article_categories_file")
-	parser.add_argument("adjacencies_file")
 	parser.add_argument("cluster_groupings_file")
-	parser.add_argument("cluster_names_file")
 	parser.add_argument("index_file")
 	parser.add_argument("vector_file")
 	parser.add_argument("dataset_file")
 
 	args = parser.parse_args()
 
-	main(args.article_categories_file,args.adjacencies_file,args.cluster_groupings_file,args.cluster_names_file,args.index_file,args.vector_file,args.dataset_file)
+	main(args.article_categories_file,args.cluster_groupings_file,args.index_file,args.vector_file,args.dataset_file)
