@@ -86,7 +86,6 @@ class DomainClassifier:
 		correct = 0
 		print("number of examples: "+str(len(predictions_orig)))
 		for i,prediction in enumerate(predictions_orig):
-			print(top_category(prediction))
 			if self.query_term == None:#then label and prediction are each lists
 				if labels[i] == self.clusters[top_category(prediction)][0]:
 					correct += 1
