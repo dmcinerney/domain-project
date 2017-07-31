@@ -145,6 +145,5 @@ if __name__ == '__main__':
 			predictions_dict["predictions_for:"+args.query_term] = predictions
 		if labels:
 			predictions_dict["labels"] = labels
-		print(str([(key,len(value)) for key,value in predictions_dict.items()]))
 		pd.DataFrame(predictions_dict).to_csv(predictions_file)
 		print("done")
