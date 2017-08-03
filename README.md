@@ -19,21 +19,37 @@ The repository is structured into two main code folders, "python" and "scripts".
 
 Preprocessing:
 1. make_wiki_adjacencies.py - constructs graph for all categories in wikipedia and writes it to a file
+
 		* Input: the skos categories file
+
 		* Output: adjacencies.txt (enumerates nodes followed by adjacency list)
+
 2. graph_manip.py
+
 3. get_categories*.py - There are a few different versions of this script.  Each version has the same inputs and outputs.
+
 		* Input: adjacencies.txt - the adjacencies file made from make_wiki_adjacencies script
+
 		* Outputs: cluster_groupings.pkl (enumerates categories for each cluster), cluster_names.pkl (enumerates a name for each cluster)
+
 4. get_article_dataset.py
+
 		* Inputs: indices.pkl, vectors.npy
+
 		* Output: dataset.csv, dataset_train.csv, dataset_dev.csv
+
 5. stats.py - computes the statistics for the dataset
+
 		* Input: dataset.csv
+
 		* Outputs: stats.csv
+
 6. train_classifiers.py - trains the classifiers for each cluster
+
 		* Input: dataset file
+
 		* Output: classifiers file
+
 7. scrapped_scripts - a bunch of scripts that were used and are no longer used may be usefull to keep around.
 
 QueryTimeProcessing:
