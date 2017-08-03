@@ -19,21 +19,21 @@ The repository is structured into two main code folders, "python" and "scripts".
 
 Preprocessing:
 1. make_wiki_adjacencies.py - constructs graph for all categories in wikipedia and writes it to a file
-		Input: the skos categories file
-		Output: the adjacencies file
+		* Input: the skos categories file
+		* Output: adjacencies.txt (enumerates nodes followed by adjacency list)
 2. graph_manip.py
 3. get_categories*.py - There are a few different versions of this script.  Each version has the same inputs and outputs.
-		Input: the adjacencies file made from make_wiki_adjacencies script
-		Outputs: 1. a cluster groupings file (enumerates categories for each cluster), 2. a cluster names file (enumerates a name for each cluster)
+		* Input: adjacencies.txt - the adjacencies file made from make_wiki_adjacencies script
+		* Outputs: cluster_groupings.pkl (enumerates categories for each cluster), cluster_names.pkl (enumerates a name for each cluster)
 4. get_article_dataset.py
-		Inputs: indices.pkl, vectors.npy
-		Output: dataset.csv, (dataset_dev.csv)
+		* Inputs: indices.pkl, vectors.npy
+		* Output: dataset.csv, dataset_train.csv, dataset_dev.csv
 5. stats.py - computes the statistics for the dataset
-		Input: dataset.csv
-		Outputs: 
+		* Input: dataset.csv
+		* Outputs: stats.csv
 6. train_classifiers.py - trains the classifiers for each cluster
-		Input: dataset file
-		Output: classifiers file
+		* Input: dataset file
+		* Output: classifiers file
 7. scrapped_scripts - a bunch of scripts that were used and are no longer used may be usefull to keep around.
 
 QueryTimeProcessing:
@@ -47,4 +47,39 @@ The scripts being run in both the preprocessing and query-time processing pipeli
 
 In addition the preprocessing pipeline needs to output models to be used in the query-time processing pipeline.  The models are placed in a folder called models.
 
-## Pipeline Script Options
+## Pipeline Script Arguments and Options
+
+Preprocessing:
+	Not optional arguments:
+		"path_to_repository"
+
+	Optional string arguments:
+		"-l", "--category_links_file", type=str, default=None
+		"-e", "--embeddings_file", type=str, default=None
+		"-c", "--article_categories_file", type=str, default=None
+		"-r", "--article_redirects_file", type=str, default=None
+		"-w", "--wiki_concrete_directory", type=str, default=None
+		"-S", "--save_cache_as", type=str, default=None
+		"-C", "--classifier_type", type=str, default="knn_multi"
+
+	True/False options:
+		"-m", "--make_adjacencies", action="store_true"
+		"-g", "--get_categories", action="store_true"
+		"-v", "--create_vectors_file", action="store_true"
+		"-d", "--make_dataset", action="store_true"
+		"-s", "--compute_stats", action="store_true"
+		"-t", "--train_classifiers", action="store_true"
+
+Query-time Processing:
+	Not optional arguments:
+		"path_to_repository"
+
+	Optional string arguments:
+		"-q", "--query_term", type=str, default=None
+		"-a", "--articles_file", type=str, default=None
+		"-e", "--embeddings_file", type=str, default=None
+		"-O", "--classifier_option", type=str, default=None
+		"-S", "--save_cache_as", type=str, default=None
+
+	True/False options:
+		"-d", "--use_dev_set", action="store_true"
