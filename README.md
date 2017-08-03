@@ -50,6 +50,7 @@ In addition the preprocessing pipeline needs to output models to be used in the 
 ## Pipeline Script Arguments and Options
 
 Preprocessing:
+
 	Not optional arguments:
 		"path_to_repository"
 
@@ -71,6 +72,7 @@ Preprocessing:
 		"-t", "--train_classifiers", action="store_true"
 
 Query-time Processing:
+
 	Not optional arguments:
 		"path_to_repository"
 
