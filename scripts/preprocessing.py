@@ -103,7 +103,7 @@ if __name__ == '__main__':
 			raise Exception("no article categories file!")
 		print("GETTING ARTICLE DATASET")
 		import python.Preprocessing.get_article_dataset as makedataset
-		makedataset.main(args.article_categories_file,adjacencies_file,cluster_groupings_file,cluster_names_file,indices_file,vectors_file,dataset_file)
+		makedataset.main(args.article_categories_file,cluster_groupings_file,indices_file,vectors_file,dataset_file,.2)
 	if args.compute_stats:
 		print("COMPUTING STATISTICS")
 		import python.Preprocessing.stats as stats
@@ -111,7 +111,7 @@ if __name__ == '__main__':
 	if args.train_classifiers:
 		print("TRAINING CLASSIFIERS")
 		import python.Preprocessing.train_classifiers as trainclassifiers
-		trainclassifiers.main(dataset_file,classifiers_file,args.classifier_type)
+		trainclassifiers.main(cluster_names_file,dataset_file,classifiers_file,args.classifier_type)
 
 	save_cache(args.save_cache_as, path_to_repository)
 

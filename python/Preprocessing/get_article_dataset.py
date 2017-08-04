@@ -62,7 +62,7 @@ def get_cluster_articles(G, categories, vectors_obj):
 	return articles
 
 def partition_dataset(rows, fraction_dev):
-	if type(rows) = str:
+	if type(rows) == str:
 		with open(rows, "r") as rowsfile:
 			df = pd.read_csv(dataset)
 			rows = [[row[1],row[2]] for i,row in df.iterrows()]
@@ -88,11 +88,11 @@ def main(article_categories_file,cluster_groupings_file,index_file,vector_file,d
 
 	#NO LONGER IN USE: For each category in each cluster, write out article titles and vectors in that category to file (grouped by cluster)
 	#write out article titles and vectors and labels sorted randomly and separated into dev and training set
-	for i,(cluster_id,cluster_name) in enumerate(cluster_names.items()):
+	for i,(cluster_id,cluster_categories) in enumerate(cluster_categories.items()):
 		#if i > 44: break
-		articles = get_cluster_articles(G,cluster_categories[cluster_id], vectors_obj)
+		articles = get_cluster_articles(G,cluster_categories, vectors_obj)
 		for article in articles:
-			rows.append(str(article),cluster_id)
+			rows.append((str(article),cluster_id))
 		#rows.append((cluster_id,cluster_name,articles))
 		if ((i+1) % 1) == 0:
 			print("there are "+str(len(articles))+" articles in cluster "+str(i)+": "+cluster_name)
