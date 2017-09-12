@@ -80,7 +80,7 @@ def main(article_categories_file,cluster_groupings_file,index_file,vector_file,d
 	make_wiki_adjacencies.add_adjacencies(G, article_categories_file)
 
 	#get cluster_names, cluster_categories from cluster_groupings_file
-	cluster_categories = get_cluster_categories(cluster_groupings_file)
+	clusters_categories = get_cluster_categories(cluster_groupings_file)
 
 	vectors_obj = load_vectors(index_file, vector_file)
 
@@ -88,15 +88,15 @@ def main(article_categories_file,cluster_groupings_file,index_file,vector_file,d
 
 	#NO LONGER IN USE: For each category in each cluster, write out article titles and vectors in that category to file (grouped by cluster)
 	#write out article titles and vectors and labels sorted randomly and separated into dev and training set
-	for i,(cluster_id,cluster_categories) in enumerate(cluster_categories.items()):
+	for i,(cluster_id,cluster_categories) in enumerate(clusters_categories.items()):
 		#if i > 44: break
 		articles = get_cluster_articles(G,cluster_categories, vectors_obj)
 		for article in articles:
 			rows.append((str(article),cluster_id))
 		#rows.append((cluster_id,cluster_name,articles))
 		if ((i+1) % 1) == 0:
-			print("there are "+str(len(articles))+" articles in cluster "+str(i)+": "+cluster_name)
-			print(str(i+1)+" / "+str(len(cluster_names)))
+			print("there are "+str(len(articles))+" articles in cluster "+str(i))
+			print(str(i+1)+" / "+str(len(clusters_categories)))
 	
 	np.random.shuffle(rows)
 	pd.DataFrame.from_records(rows).to_csv(dataset_file)
