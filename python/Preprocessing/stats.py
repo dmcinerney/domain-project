@@ -27,12 +27,12 @@ def get_data(dataset_file):
 			ytemp = row[2]
 			Xtemps = eval(row[1])
 			clusters.append((Xtemps,ytemp))
-			if (i+1)%1 == 0:
+			if (i+1)%10000 == 0:
 				print(str(i+1)+" / "+str(df.shape[0]))
 	return clusters
 
 def get_vectors(listobj):
-	vectorlist = [a[1] for a in listobj if type(a[1]) != type(None)]
+	vectorlist = [a[1] for a in listobj if type(a) != type(None) and type(a[1]) != type(None)]
 	return vectorlist
 
 def main(dataset_file,stats_file):
