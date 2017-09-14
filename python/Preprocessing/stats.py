@@ -26,7 +26,7 @@ def get_data(dataset_file):
 		for i,row in df.iterrows():
 			ytemp = row[2]
 			Xtemps = eval(row[1])
-			clusters.append((ytemp,nametemp,Xtemps))
+			clusters.append((Xtemps,ytemp))
 			if (i+1)%1 == 0:
 				print(str(i+1)+" / "+str(df.shape[0]))
 	return clusters
