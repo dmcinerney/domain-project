@@ -71,7 +71,8 @@ if __name__ == '__main__':
 	adjacencies_file = os.path.join(temp_folder,"adjacencies.txt")
 	cluster_groupings_file = os.path.join(temp_folder,"cluster_groupings.pkl")
 	cluster_names_file = os.path.join(temp_folder,"cluster_names.pkl")
-	dataset_file = os.path.join(temp_folder,"dataset.csv")
+	dataset_file_base = os.path.join(temp_folder,"dataset.csv")
+	dataset_file_train = dataset_file_base[:-4]+"_train.csv" #may want to not do manually in the future
 	indices_file = os.path.join(temp_folder,"indices.pkl")
 	vectors_file = os.path.join(temp_folder,"vectors.npy")
 	classifiers_file = os.path.join(models_folder,"classifiers.pkl")
@@ -103,15 +104,15 @@ if __name__ == '__main__':
 			raise Exception("no article categories file!")
 		print("GETTING ARTICLE DATASET")
 		import python.Preprocessing.get_article_dataset as makedataset
-		makedataset.main(args.article_categories_file,cluster_groupings_file,indices_file,vectors_file,dataset_file,.2)
+		makedataset.main(args.article_categories_file,cluster_groupings_file,indices_file,vectors_file,dataset_file_base,.2)
 	if args.compute_stats:
 		print("COMPUTING STATISTICS")
 		import python.Preprocessing.stats as stats
-		stats.main(dataset_file,stats_file)
+		stats.main(dataset_file_train,stats_file)
 	if args.train_classifiers:
 		print("TRAINING CLASSIFIERS")
 		import python.Preprocessing.train_classifiers as trainclassifiers
-		trainclassifiers.main(cluster_names_file,dataset_file,classifiers_file,args.classifier_type)
+		trainclassifiers.main(cluster_names_file,dataset_file_train,classifiers_file,args.classifier_type)
 
 	save_cache(args.save_cache_as, path_to_repository)
 

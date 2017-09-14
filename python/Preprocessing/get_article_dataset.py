@@ -99,7 +99,7 @@ def main(article_categories_file,cluster_groupings_file,index_file,vector_file,d
 			print(str(i+1)+" / "+str(len(clusters_categories)))
 	
 	np.random.shuffle(rows)
-	pd.DataFrame.from_records(rows).to_csv(dataset_file)
+	#pd.DataFrame.from_records(rows).to_csv(dataset_file) # do we ever need the combined train and dev? no
 
 	train_rows, dev_rows = partition_dataset(rows, fraction_dev)
 
