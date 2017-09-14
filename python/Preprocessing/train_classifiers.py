@@ -47,7 +47,7 @@ def get_data(dataset_file):
 			names.append(article[0])
 			X.append(article[1])
 			y.append(row[2])
-			if (i+1)%1 == 0:
+			if (i+1)%10000 == 0 or i+1 == df.shape[0]:
 				print(str(i+1)+" / "+str(df.shape[0]))
 	return X, y, names
 

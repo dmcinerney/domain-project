@@ -27,8 +27,9 @@ def get_data(dataset_file):
 			ytemp = row[2]
 			Xtemps = eval(row[1])
 			clusters.append((Xtemps,ytemp))
-			if (i+1)%10000 == 0:
+			if (i+1)%10000 == 0 or i+1 == df.shape[0]:
 				print(str(i+1)+" / "+str(df.shape[0]))
+	print("done")
 	return clusters
 
 def get_vectors(listobj):
