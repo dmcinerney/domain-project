@@ -46,7 +46,7 @@ def get_data(dataset_file):
 			article = eval(row[1])
 			names.append(article[0])
 			X.append(article[1])
-			y.append(row[2])
+			y.append(eval(row[2]))
 			if (i+1)%10000 == 0 or i+1 == df.shape[0]:
 				print(str(i+1)+" / "+str(df.shape[0]))
 	return X, y, names
@@ -58,7 +58,7 @@ def main(clusternames_file, dataset_file, classifiers_file, classifier_type):
 	else:
 		raise Exception("No classifier by the name of "+classifier_type+" is available!")
 
-	X,y, names = get_data(dataset_file)
+	X, y, names = get_data(dataset_file)
 
 	if type_id >= 0:
 		clusterids = []

@@ -88,11 +88,13 @@ def main(article_categories_file,cluster_groupings_file,index_file,vector_file,d
 
 	#NO LONGER IN USE: For each category in each cluster, write out article titles and vectors in that category to file (grouped by cluster)
 	#write out article titles and vectors and labels sorted randomly and separated into dev and training set
+	#note that the format of the rows in the dataset are: "((article_name,article_vector),(label,))"
+	#also note that the label is only one of the clusters here, but it could theoretically be more than one cluster, hence it is a tuple.
 	for i,(cluster_id,cluster_categories) in enumerate(clusters_categories.items()):
 		#if i > 44: break
 		articles = get_cluster_articles(G,cluster_categories, vectors_obj)
 		for article in articles:
-			rows.append((str(article),cluster_id))
+			rows.append((str(article),str((cluster_id,))))
 		#rows.append((cluster_id,cluster_name,articles))
 		if ((i+1) % 1) == 0:
 			print("there are "+str(len(articles))+" articles in cluster "+str(i))
