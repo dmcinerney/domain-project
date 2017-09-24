@@ -24,7 +24,7 @@ def get_data(dataset_file):
 		df = pd.read_csv(dataset)
 		clusters = []
 		for i,row in df.iterrows():
-			ytemp = row[2]
+			ytemp = eval(row[2])
 			Xtemps = eval(row[1])
 			clusters.append((Xtemps,ytemp))
 			if (i+1)%10000 == 0 or i+1 == df.shape[0]:
