@@ -2,7 +2,7 @@
 #this script should be run from the bottom level of the package
 '''
 example command line run with every possible option used (except redirects) (runs whole pipeline):
-python domain-project/scripts/preprocessing.py domain-project/ -l skos_categories_en.ttl -c article_categories_en.ttl -w /export/corpora4/concrete/wiki-en/ -m -g -v -d -s -t -S -C 
+python domain-project/scripts/preprocessing.py domain-project/ -l skos_categories_en.ttl -c article_categories_en.ttl -w /export/corpora4/concrete/wiki-en/ -m -g -v -d -s -t -S -C knn_multi
 
 more common, less complex example command line run (doesn't run whole pipeline so must have a cache):
 python domain-project/scripts/preprocessing.py domain-project/ -t -C knn_multi
@@ -114,5 +114,4 @@ if __name__ == '__main__':
 		import python.Preprocessing.train_classifiers as trainclassifiers
 		trainclassifiers.main(cluster_names_file,dataset_file_train,classifiers_file,args.classifier_type)
 
-	save_cache(args.save_cache_as, path_to_repository)
-
+	save_cache(args.save_cache_as, path_to_repository, temp_folder)
