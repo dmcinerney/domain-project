@@ -22,7 +22,7 @@ class DomainClassifier:
 		if self.query_term:
 			if type(self.classifiers) == list: #set of binary classifiers
 				if self.option not in self.options:
-					raise Exception("No option specified for producing binary classification for domain term!")
+					raise Exception("No option specified for producing binary classification for domain term! Please specify with the command line option \"-O\"")
 				else:
 					if embeddings_file or self.option == "cosine_sim":
 						if self.option != "cosine_sim":
