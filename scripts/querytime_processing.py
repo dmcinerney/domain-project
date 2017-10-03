@@ -2,7 +2,7 @@
 #this script should be run from the bottom level of the package
 
 #example command line run:
-#python domain-project/scripts/querytime_processing.py domain-project/ -q sports
+#python domain-project/scripts/querytime_processing.py domain-project/ -q sports -O cosine_sim
 
 #FIXME: add a file to tell what settings were used
 
