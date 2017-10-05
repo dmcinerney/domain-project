@@ -1,10 +1,9 @@
-#This is the script to run the complete pre-processing pipeline
-#this script should be run from the bottom level of the package
+# This is the script to run the complete pre-processing pipeline
 
-#example command line run:
-#python domain-project/scripts/querytime_processing.py domain-project/ -q sports -O cosine_sim
+# example command line run:
+# python domain-project/scripts/querytime_processing.py domain-project/ sports -O cosine_sim -d
 
-#FIXME: add a file to tell what settings were used
+# FIXME: add a file to tell what settings were used
 
 import argparse
 import os
@@ -80,11 +79,12 @@ def get_vectors(dataset_file):
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 
-	#FIXME: may want to add "help=" to all of these
+	# FIXME: may want to add "help=" to all of these
 	parser.add_argument("path_to_repository")
-	parser.add_argument("-q", "--query_term", type=str, default=None)
-	parser.add_argument("-a", "--articles_file", type=str, default=None)
-	parser.add_argument("-e", "--embeddings_file", type=str, default=None)
+	parser.add_argument("query_term")
+	# NOTE: this script assumes that the articles are already processed into vectors of the same sort as in preprocessing
+	parser.add_argument("-a", "--article_vectors_file", type=str, default=None, help="If you want to test on vectors of articles, provide the vector file here")
+	parser.add_argument("-e", "--embeddings_file", type=str, default="This is needed for cosine_sim option")
 	parser.add_argument("-O", "--classifier_option", type=str, default=None)
 	parser.add_argument("-S", "--save_cache_as", type=str, default=None)
 	parser.add_argument("-d", "--use_dev_set", action="store_true")
@@ -95,7 +95,7 @@ if __name__ == '__main__':
 
 	#query-time processing path names
 	path_to_repository = os.path.join(initial_working_directory,args.path_to_repository)
-	sys.path.append(path_to_repository)#FIXME: there is a lot of commentary on this, not sure if it's the right way to do it
+	sys.path.append(path_to_repository) # FIXME: there is a lot of commentary on this, not sure if it's the right way to do it
 	models_folder = os.path.join(path_to_repository,"models")
 	querytime_processing_folder = os.path.join(path_to_repository,"python/QueryTimeProcessing")
 
@@ -113,14 +113,18 @@ if __name__ == '__main__':
 		neuralnet_file = None
 	domainclassifier_file = os.path.join(models_folder,"domain_classifier.pkl")
 	if args.use_dev_set:
-		dataset_file = os.path.join(path_to_repository,"temp_preprocessing/")
-	dataset_file = os.path.join(temp_folder,"dataset.csv")
+		dataset_file = os.path.join(path_to_repository,"temp_preprocessing/dataset_dev.csv")
+	if type(args.article_vectors_file) != type(None):
+		dataset_file = args.article_vectors_file
+		if args.use_dev_set:
+			print("WARNING: using article_vectors_file instead of dev set.")
+	if not args.use_dev_set and type(args.article_vectors_file) == type(None):
+		dataset_file = None
 	'''
 	indices_file = os.path.join(temp_folder,"indices.pkl")
 	vectors_file = os.path.join(temp_folder,"vectors.npy")
 	labels_file = os.path.join(temp_folder,"labels.pkl")
 	'''
-	vectorizer_file = os.path.join(models_folder,"vectorizer.pkl")
 	predictions_file = os.path.join(temp_folder,"predictions.csv")
 	
 	#run query-time processing pipeline
@@ -129,8 +133,7 @@ if __name__ == '__main__':
 	with open(domainclassifier_file, "wb") as classifierfile:
 		pkl.dump(classifier, classifierfile)
 
-	if args.articles_file or (os.path.isfile(vectors_file) and os.path.isfile(indices_file)):
-		#if not (os.path.isfile(vectors_file) and os.path.isfile(indices_file)):
+	if dataset_file:
 		if not os.path.isfile(dataset_file):
 			print("CREATING VECTOR FILE")
 			raise NotImplementedError
@@ -140,13 +143,11 @@ if __name__ == '__main__':
 		if labels:
 			predictions_orig, predictions, accuracy = classifier.compute_accuracy(vectors, labels)
 		else:
-			predictions_orig, predictions = classifier.predict(vectors)
+			predictions_orig, predictions = classifier.predict(vectors, returnboth=True)
 			accuracy = None
 		names = [convert_name(name) for name in names]
 		predictions_orig = [str(prediction) for prediction in predictions_orig]
-		predictions_dict = {"names":names, "predictions_for:"+str(classifier.clusters):predictions_orig}
-		if type(predictions) != type(None):
-			predictions_dict["predictions_for:"+args.query_term] = predictions
+		predictions_dict = {"names":names, "predictions_for:"+str(classifier.clusters):predictions_orig,"predictions_for:"+args.query_term:predictions}
 		if labels:
 			predictions_dict["labels"] = labels
 		pd.DataFrame(predictions_dict).to_csv(predictions_file)

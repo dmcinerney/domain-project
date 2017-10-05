@@ -88,6 +88,7 @@ Preprocessing:
 		"-t", "--train_classifiers", action="store_true"
 
 Query-time Processing:
+FIXME: not correct, needs to be updated
 
 	Not optional arguments:
 		"path_to_repository"

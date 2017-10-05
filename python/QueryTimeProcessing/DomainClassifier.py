@@ -53,7 +53,7 @@ class DomainClassifier:
 			predictions = [clf.predict(vectors) for clf in self.classifiers]
 			predictions = np.transpose(predictions)
 
-		if self.query_term == None or self.option == None:
+		if type(self.query_term) == type(None) or tyep(self.option) == type(None):
 			if returnboth:
 				print("Warning: returning None for final predictions because original and final are expected even though query term is not given!")
 				return predictions, None
