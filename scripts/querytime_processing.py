@@ -10,7 +10,6 @@ import os
 import sys
 import pandas as pd
 import pickle as pkl
-import python.global_functions as GlobalFunctions
 
 def select_titles(titles, labels_file):
 	#FIXME: this is a temporary solution (should get a real dev set)
@@ -135,6 +134,8 @@ if __name__ == '__main__':
 			raise Exception("no dataset file by that name!")
 
 		#names, vectors, labels = get_vectors(indices_file, vectors_file, labels_file=labels_file)
+
+		import python.global_functions as GlobalFunctions
 		names, vectors, labels = GlobalFunctions.get_data(dataset_file)
 		if labels:
 			predictions_orig, predictions, accuracy = classifier.compute_accuracy(vectors, labels)
