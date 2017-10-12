@@ -1,3 +1,6 @@
+
+import pd
+
 def get_data(dataset_file):
 	with open(dataset_file, "r") as dataset:
 		print("reading csv file ("+dataset_file+")")
