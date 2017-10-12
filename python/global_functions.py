@@ -1,5 +1,4 @@
-
-import pd
+import pandas as pd
 
 def get_data(dataset_file):
 	with open(dataset_file, "r") as dataset:
