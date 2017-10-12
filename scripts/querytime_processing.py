@@ -10,6 +10,7 @@ import os
 import sys
 import pandas as pd
 import pickle as pkl
+import python.global_functions as GlobalFunctions
 
 def select_titles(titles, labels_file):
 	#FIXME: this is a temporary solution (should get a real dev set)
@@ -72,10 +73,6 @@ def get_vectors(indices_file, vectors_file, labels_file=None):
 	return names, vectors, labels
 '''
 
-def get_vectors(dataset_file):
-
-	return names, vectors, labels
-
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 
@@ -118,7 +115,7 @@ if __name__ == '__main__':
 		dataset_file = args.article_vectors_file
 		if args.use_dev_set:
 			print("WARNING: using article_vectors_file instead of dev set.")
-	if not args.use_dev_set and type(args.article_vectors_file) == type(None):
+	if not args.use_dev_set and args.article_vectors_file is None:
 		dataset_file = None
 	'''
 	indices_file = os.path.join(temp_folder,"indices.pkl")
@@ -135,11 +132,10 @@ if __name__ == '__main__':
 
 	if dataset_file:
 		if not os.path.isfile(dataset_file):
-			print("CREATING VECTOR FILE")
-			raise NotImplementedError
+			raise Exception("no dataset file by that name!")
 
 		#names, vectors, labels = get_vectors(indices_file, vectors_file, labels_file=labels_file)
-		names, vectors, labels = get_vectors(dataset_file)
+		names, vectors, labels = GlobalFunctions.get_data(dataset_file)
 		if labels:
 			predictions_orig, predictions, accuracy = classifier.compute_accuracy(vectors, labels)
 		else:

@@ -9,6 +9,7 @@ from sklearn.multiclass import OneVsRestClassifier
 from sklearn.multiclass import OneVsOneClassifier
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.neighbors import KNeighborsClassifier
+import python.global_functions as GlobalFunctions
 
 #multi types are < 0 and binary types are >= 0
 _classifier_types = {"knn_multi":-1,"svm_binary":0}
@@ -35,23 +36,6 @@ def get_data(dataset_file):
 	return X, y, names_dict
 '''
 
-def get_data(dataset_file):
-	with open(dataset_file, "r") as dataset:
-		print("reading csv file ("+dataset_file+")")
-		df = pd.read_csv(dataset)
-		names = []
-		X = []
-		y = []
-		for i,row in df.iterrows():
-			article = eval(row[1])
-			if type(article[1]) != type(None):
-				names.append(article[0])
-				X.append(article[1])
-				y.append(eval(row[2]))
-			if (i+1)%10000 == 0 or i+1 == df.shape[0]:
-				print(str(i+1)+" / "+str(df.shape[0]))
-	return X, y, names
-
 def main(clusternames_file, dataset_file, classifiers_file, classifier_type):
 
 	if classifier_type in _classifier_types.keys():
@@ -59,8 +43,7 @@ def main(clusternames_file, dataset_file, classifiers_file, classifier_type):
 	else:
 		raise Exception("No classifier by the name of "+classifier_type+" is available!")
 
-	X, y, names = get_data(dataset_file)
-	print(X)
+	names, X, y = GlobalFunctions.get_data(dataset_file)
 
 	if type_id >= 0:
 		clusterids = []
