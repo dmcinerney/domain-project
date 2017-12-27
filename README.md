@@ -6,8 +6,10 @@ The dataset for this project will be coming primarily from the dbpedia website a
 1. English skos categories file (with the ttl extension) - used to construct a graph of the connections between Wikipedia category pages
 2. Article categories file (with the ttl extension) - used to link the articles to their categories
 3. Wikipedia XML source dump file (with the xml extension) - used to get the articles in Wikipedia
-<> (4. english redirects file (with the ttl extension) - used to get all titles of each article (This is not currently used in the repo but may be used in the future.))
-<> (The version of Wikipedia stored at JHU CLSP in the concrete format (see http://hltcoe.github.io) may also be used later on.)
+
+Not used now but may be used in the future:
+4. (english redirects file (with the ttl extension) - used to get all titles of each article (This is not currently used in the repo but may be used in the future.))
+5. (The version of Wikipedia stored at JHU CLSP in the concrete format (see http://hltcoe.github.io) may also be used later on.)
 
 In addition to the Wikipedia dataset, this project also uses the GloVe (Global Vectors for Word Representation) files from the following website: https://nlp.stanford.edu/projects/glove/.
 
