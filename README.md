@@ -1,7 +1,7 @@
 # domain-project
 ## Data
 
-The dataset for this project will be coming primarily from the dbpedia website at the following address:
+The dataset for this project will be coming primarily from the dbpedia website at http://wiki.dbpedia.org/downloads-2016-10:
 
 1. English skos categories file (with the ttl extension) - used to construct a graph of the connections between Wikipedia category pages
 2. Article categories file (with the ttl extension) - used to link the articles to their categories
