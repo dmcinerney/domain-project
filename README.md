@@ -102,3 +102,21 @@ FIXME: not correct, needs to be updated
 
 	True/False options:
 		"-d", "--use_dev_set", action="store_true"
+
+## Accademic Papers:
+
+Bunescu, R. C., & Pasca, M. (2006, April). Using Encyclopedic Knowledge for Named entity Disambiguation. In Eacl (Vol. 6, pp. 9-16).
+
+Coursey, K., Mihalcea, R., & Moen, W. (2009, June). Using encyclopedic knowledge for automatic topic identification. In Proceedings of the Thirteenth Conference on Computational Natural Language Learning (pp. 210-218). Association for Computational Linguistics.
+
+Cucerzan, S. (2007). Large-scale named entity disambiguation based on Wikipedia data.
+
+Kittur, A., Chi, E. H., & Suh, B. (2009, April). What's in Wikipedia?: mapping topics and conflict using socially annotated category structure. In Proceedings of the SIGCHI conference on human factors in computing systems (pp. 1509-1512). ACM.
+
+Li, X., Chen, J., & Zaiane, O. (2013, April). Text Document Topical Recursive Clustering and Automatic Labeling of a Hierarchy of Document Clusters. In Pacific-Asia Conference on Knowledge Discovery and Data Mining (pp. 197-208). Springer Berlin Heidelberg.
+
+Schönhofen, P. (2009). Identifying document topics using the Wikipedia category network. Web Intelligence and Agent Systems: An International Journal, 7(2), 195-207.
+
+Strube, M., & Ponzetto, S. P. (2006, July). WikiRelate! Computing semantic relatedness using Wikipedia. In AAAI (Vol. 6, pp. 1419-1424).
+
+Nayak, R., Mills, R., De-Vries, C., & Geva, S. (2014, November). Clustering and labeling a web scale document collection using Wikipedia clusters. In Proceedings of the 5th International Workshop on Web-scale Knowledge Representation Retrieval & Reasoning (pp. 23-30). ACM.
