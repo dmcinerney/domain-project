@@ -8,6 +8,7 @@ The dataset for this project will be coming primarily from the dbpedia website a
 3. Wikipedia XML source dump file (with the xml extension) - used to get the articles in Wikipedia
 
 Not used now but may be used in the future:
+
 4. (english redirects file (with the ttl extension) - used to get all titles of each article (This is not currently used in the repo but may be used in the future.))
 5. (The version of Wikipedia stored at JHU CLSP in the concrete format (see http://hltcoe.github.io) may also be used later on.)
 
